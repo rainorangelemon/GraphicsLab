@@ -17,8 +17,7 @@ public class ModelLine extends ModelShape{
 	@Override
 	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
-		// TODO Auto-generated method stub
-		result.add(new ModelDot(x0, y0, Color.BLACK));
+		result.addAll(drawLine());
 		return result;
 	}
 	
@@ -45,4 +44,39 @@ public class ModelLine extends ModelShape{
 		this.y1 = y1;
 	}
 	
+	private List<ModelDot> drawLine(){
+		List<ModelDot> result = new ArrayList<ModelDot>();
+		int x0 = this.x0; int x1 = this.x1; int y0 = this.y0; int y1 = this.y1;
+	    Boolean steep = Math.abs(y1 - y0) > Math.abs(x1 - x0);
+	    if(steep){
+	        x0 = (x0+y0) - (y0=x0);
+	        x1 = (x1+y1) - (y1=x1);
+	    }
+	    if(x0 > x1){
+	    	x1 = (x0+x1) - (x0=x1);
+	    	y1 = (y0+y1) - (y0=y1);
+	    }
+	    int deltax = x1 - x0;
+	    int deltay = Math.abs(y1 - y0);
+	    int error = deltax / 2;
+	    int ystep;
+	    int y = y0;
+	    if(y0 < y1){
+	    	ystep = 1;
+	    }else{
+	    	ystep = -1;
+	    }
+	    for(int x=x0;x<=x1;x++){
+	        if(steep)
+	    		result.add(new ModelDot(y, x, super.getColor()));
+	        else 
+	    		result.add(new ModelDot(x, y, super.getColor()));
+	        error = error - deltay;
+	        if(error < 0){
+	            y = y + ystep;
+	            error = error + deltax;
+	        }
+	    }
+	    return result;
+	}
 }

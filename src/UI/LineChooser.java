@@ -57,7 +57,7 @@ public class LineChooser extends ShapeChooser{
 			}
 			}, 
 			"x");
-		HBox end_y = UIComponentFactory.intSlider(line.getY0(), 0, height-1, new Callback<Integer, Integer>(){
+		HBox end_y = UIComponentFactory.intSlider(line.getY1(), 0, height-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				line.setPos(line.getX0(), line.getY0(), line.getX1(), param);
