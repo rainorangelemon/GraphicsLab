@@ -13,7 +13,11 @@ public abstract class ModelShape {
 	
 	protected abstract List<ModelDot> getModelDots(ModelDot[][] dots);
 	
-	protected Color getColor(){
+	public Color getColor(){
 		return color;
+	}
+	
+	public void changeColor(Color color){
+		this.color = color;
 	}
 }

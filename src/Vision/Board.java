@@ -37,6 +37,7 @@ public class Board {
 		addMenuBar(mainStage, height, width);
 		addSketchPad(mainStage, height, width);
 		addPosInformation(mainStage);
+		root.setLeft(paper.getStepEditor());
 		scene = new Scene(root);
 		mainStage.setScene(scene);
 		mainStage.sizeToScene();
@@ -74,7 +75,18 @@ public class Board {
 		 
 		 Menu shapeMenu = addShapeOptions(height, width);
 		 
-		 menuBar.getMenus().addAll(fileMenu, shapeMenu);
+		 Menu editMenu = new Menu("Edit");
+		 MenuItem undo = new MenuItem("Undo");
+		 undo.setOnAction(e->{
+			 paper.undo();
+		 });
+		 MenuItem redo = new MenuItem("Redo");
+		 redo.setOnAction(e->{
+			 paper.redo();
+		 });
+		 editMenu.getItems().addAll(undo, redo);
+		 
+		 menuBar.getMenus().addAll(fileMenu, shapeMenu, editMenu);
 		 root.setTop(menuBar);
 	}
 	
@@ -106,11 +118,10 @@ public class Board {
 			shapeOption.setOnAction((f)->{
 			try {
 				Stage stage = new Stage();
-				@SuppressWarnings("unused")
 				Class<?> shapeClass = Class.forName("Model.Model"+shapeName);
 				Class<?> shapeEditorClass = Class.forName("UI."+shapeName+"Chooser");
-				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, Callback.class});
-				ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, new Callback<ModelShape, Integer>(){
+				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
+				ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, null, new Callback<ModelShape, Integer>(){
 					@Override
 					public Integer call(ModelShape param) {
 						stage.close();

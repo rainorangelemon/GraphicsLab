@@ -24,16 +24,18 @@ public class ShapeManager {
 	}
 	
 	public List<ModelDot> addNewStep(ModelShape newShape){
-		Vector<ModelShape> result = new Vector<ModelShape>();
-		for(int i=0; i<currentIndex;i++){
-			result.add(steps.get(i));
+		if(currentIndex != steps.size()){
+			Vector<ModelShape> result = new Vector<ModelShape>();
+			for(int i=0; i<currentIndex;i++){
+				result.add(steps.get(i));
+			}
+			steps = result;
 		}
-		result.add(newShape);
-		currentIndex = result.size();
-		steps = result;
+		steps.add(newShape);
+		currentIndex = steps.size();
 		List<ModelDot> newDots = newShape.getModelDots(dots);
 		for(ModelDot newDot: newDots){
-			dots[newDot.getY()][newDot.getX()] = newDot;
+			dots[newDot.getY()][newDot.getX()].color = newDot.color;
 		}
 		return newDots;
 	}
@@ -51,12 +53,27 @@ public class ShapeManager {
 	private ModelDot[][] getModelDots(){
 		for(int y=0;y<height;y++){
 			for(int x=0;x<width;x++){
-				dots[y][x] = new ModelDot(x, y, Color.WHITE);
+				dots[y][x].color=Color.WHITE;
 			}
 		}
 		for(int step=0; step<currentIndex; step++){
-			addNewStep(steps.get(step));
+			List<ModelDot> newDots = steps.get(step).getModelDots(dots);
+			for(ModelDot newDot: newDots){
+				dots[newDot.getY()][newDot.getX()].color = newDot.color;
+			}
 		}
 		return dots;
+	}
+	
+	public Vector<ModelShape> getSteps(){
+		return steps;
+	}
+	
+	public int getCurrentIndex(){
+		return currentIndex;
+	}
+	
+	public ModelDot[][] refresh(){
+		return getModelDots();
 	}
 }
