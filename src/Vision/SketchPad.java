@@ -52,8 +52,9 @@ public class SketchPad extends Pane{
 	
 	public void addNewShape(ModelShape newShape){
 		List<ModelDot> modelDots = shapeManager.addNewStep(newShape);
-		for(ModelDot dot: modelDots){
-			dotMatrix[dot.getY()][dot.getX()].changeColor(dot.getColor());
+		for(ModelDot newDot: modelDots){
+			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width))
+				dotMatrix[newDot.getY()][newDot.getX()].changeColor(newDot.getColor());
 		}
 		refreshStepEditor();
 	}

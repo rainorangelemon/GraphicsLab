@@ -6,6 +6,7 @@ import Vision.UIComponentFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -30,7 +31,8 @@ public class LineChooser extends ShapeChooser{
 	
 	@Override
 	public Node showEditor() {
-		VBox root = new VBox();
+		BorderPane root = new BorderPane();
+		VBox positionModifier = new VBox();
 		Label start = new Label("start position");
 		HBox start_x = UIComponentFactory.intSlider(line.getX0(), 0, width-1, new Callback<Integer, Integer>(){
 			@Override
@@ -67,7 +69,15 @@ public class LineChooser extends ShapeChooser{
 			"y");
 		Button button = new Button("Confirm");
 		button.setOnMouseClicked(e->{saver.call(line);});
-		root.getChildren().addAll(start, start_x, start_y, end, end_x, end_y, button);
+		positionModifier.getChildren().addAll(start, start_x, start_y, end, end_x, end_y, button);
+		root.setLeft(positionModifier);
+		root.setRight(super.getColorPicker(line.getColor(), new Callback<Color, Integer>(){
+			@Override
+			public Integer call(Color param) {
+				line.setColor(param);
+				return null;
+			}
+		}));
 		return root;
 	}
 

@@ -17,7 +17,8 @@ public abstract class ModelShape {
 		return color;
 	}
 	
-	public void changeColor(Color color){
+	public void setColor(Color color){
 		this.color = color;
 	}
+
 }

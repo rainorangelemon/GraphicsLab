@@ -35,7 +35,8 @@ public class ShapeManager {
 		currentIndex = steps.size();
 		List<ModelDot> newDots = newShape.getModelDots(dots);
 		for(ModelDot newDot: newDots){
-			dots[newDot.getY()][newDot.getX()].color = newDot.color;
+			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width))
+				dots[newDot.getY()][newDot.getX()].color = newDot.color;
 		}
 		return newDots;
 	}
@@ -59,7 +60,8 @@ public class ShapeManager {
 		for(int step=0; step<currentIndex; step++){
 			List<ModelDot> newDots = steps.get(step).getModelDots(dots);
 			for(ModelDot newDot: newDots){
-				dots[newDot.getY()][newDot.getX()].color = newDot.color;
+				if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width))
+					dots[newDot.getY()][newDot.getX()].color = newDot.color;
 			}
 		}
 		return dots;
