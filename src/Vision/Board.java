@@ -30,6 +30,7 @@ public class Board {
 	@SuppressWarnings({ "serial" })
 	private List<String> availableShapes = new ArrayList<String>(){{
 		this.add("Line");
+		this.add("Circle");
 	}};
 	private Color currentColor = Color.BLACK;
 	

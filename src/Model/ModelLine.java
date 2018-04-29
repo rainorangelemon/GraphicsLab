@@ -44,6 +44,7 @@ public class ModelLine extends ModelShape{
 		this.y1 = y1;
 	}
 	
+	// the Bresenham algorithm
 	private List<ModelDot> drawLine(){
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		int x0 = this.x0; int x1 = this.x1; int y0 = this.y0; int y1 = this.y1;
