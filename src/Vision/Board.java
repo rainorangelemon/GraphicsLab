@@ -16,6 +16,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -43,6 +44,7 @@ public class Board {
 		mainStage.setScene(scene);
 		mainStage.sizeToScene();
 		mainStage.centerOnScreen();
+		mainStage = UIComponentFactory.renderStage(mainStage);
 		mainStage.show();
 	}
 	
@@ -66,6 +68,7 @@ public class Board {
 		 MenuItem newMenuItem = new MenuItem("New");
 		 newMenuItem.setOnAction(e -> {
 			 Stage newStage = new Stage();
+			 newStage = UIComponentFactory.renderStage(newStage);
 			 new StartMenu(newStage);
 		 });
 		 MenuItem importMenuItem = new MenuItem("Import");
@@ -138,6 +141,9 @@ public class Board {
 						return null;
 					}
 				});
+				Image anotherIcon = new Image("Resources/favicon.png");
+		        stage.getIcons().add(anotherIcon);
+		        stage.setTitle("Yu's Lab");
 				stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
 				stage.sizeToScene();
 				stage.show();

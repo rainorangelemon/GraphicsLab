@@ -5,7 +5,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class UIComponentFactory {
@@ -39,5 +41,12 @@ public class UIComponentFactory {
 	    });
 	    result.getChildren().addAll(slider, levelLabel);
 	    return result;
+	}
+	
+	public static Stage renderStage(Stage stage){
+		Image anotherIcon = new Image("Resources/favicon.png");
+        stage.getIcons().add(anotherIcon);
+        stage.setTitle("Yu's Lab");
+        return stage;
 	}
 }

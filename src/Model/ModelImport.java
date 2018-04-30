@@ -64,7 +64,7 @@ public class ModelImport extends ModelShape{
                 }
             }
             return result;
-        } catch (IOException ex) {
+        } catch (IOException | IllegalArgumentException ex) {
            return new ArrayList<ModelDot>();
         }
 	}

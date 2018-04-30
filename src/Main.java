@@ -1,5 +1,6 @@
 
 import Vision.StartMenu;
+import Vision.UIComponentFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,6 +20,7 @@ public class Main extends Application{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		primaryStage = UIComponentFactory.renderStage(primaryStage);
 		new StartMenu(primaryStage);
 	}
 
