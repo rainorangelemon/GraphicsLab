@@ -1,21 +1,30 @@
 package Vision;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
+
 import Model.ModelDot;
 import Model.ModelShape;
 import Model.ShapeManager;
+import UI.ImportChooser;
 import UI.ShapeChooser;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -101,9 +110,11 @@ public class SketchPad extends Pane{
 							return null;
 						}
 					});
-					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
-					stage.sizeToScene();
-					stage.show();
+					if(shapeChooser.showEditor()!=null){
+						stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
+						stage.sizeToScene();
+						stage.show();
+					}
 				} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
 					e1.printStackTrace(); //handled by exiting the program
 					System.exit(1);
@@ -120,5 +131,38 @@ public class SketchPad extends Pane{
 		result.setPannable(true);
 		result.setPrefSize(120, height);
 		return result;
+	}
+	
+	public void captureAndSaveDisplay(){
+	    FileChooser fileChooser = new FileChooser();
+
+	    //Set extension filter
+	    fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("png files (*.png)", "*.png"));
+
+	    //Prompt user to select a file
+	    File file = fileChooser.showSaveDialog(null);
+
+	    if(file != null){
+	        try {
+	            //Pad the capture area
+	            WritableImage writableImage = new WritableImage((int)getWidth(),
+	                    (int)getHeight());
+	            snapshot(null, writableImage);
+	            RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+	            //Write the snapshot to the chosen file
+	            ImageIO.write(renderedImage, "png", file);
+	        } catch (IOException ex) { ex.printStackTrace(); }
+	    }
+	}
+	
+	public void importPic(){
+		ShapeChooser shapeChooser = new ImportChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
+			@Override
+			public Integer call(ModelShape param) {
+				addNewShape(param);
+				return null;
+			}
+		});
+		shapeChooser.showEditor();
 	}
 }

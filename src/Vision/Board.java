@@ -68,11 +68,19 @@ public class Board {
 			 Stage newStage = new Stage();
 			 new StartMenu(newStage);
 		 });
+		 MenuItem importMenuItem = new MenuItem("Import");
+		 importMenuItem.setOnAction(e -> {
+			 paper.importPic();
+		 });
+		 MenuItem exportMenuItem = new MenuItem("Export");
+		 exportMenuItem.setOnAction(e -> {
+			 paper.captureAndSaveDisplay();
+		 });
 		 MenuItem exitMenuItem = new MenuItem("Exit");
 		 exitMenuItem.setOnAction(e -> mainStage.close());
 
 		 fileMenu.getItems().addAll(newMenuItem,
-		        new SeparatorMenuItem(), exitMenuItem);
+		        new SeparatorMenuItem(), importMenuItem, exportMenuItem, new SeparatorMenuItem(), exitMenuItem);
 		 
 		 Menu shapeMenu = addShapeOptions(height, width);
 		 
