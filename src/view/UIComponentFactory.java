@@ -1,4 +1,4 @@
-package Vision;
+package view;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -44,7 +44,7 @@ public class UIComponentFactory {
 	}
 	
 	public static Stage renderStage(Stage stage){
-		Image anotherIcon = new Image("Resources/favicon.png");
+		Image anotherIcon = new Image("resources/favicon.png");
         stage.getIcons().add(anotherIcon);
         stage.setTitle("Yu's Lab");
         return stage;

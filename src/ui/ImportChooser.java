@@ -1,9 +1,9 @@
-package UI;
+package ui;
 
 import java.io.File;
 
-import Model.ModelImport;
-import Model.ModelShape;
+import model.ModelImport;
+import model.ModelShape;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;

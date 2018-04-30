@@ -1,12 +1,14 @@
-package Vision;
+package controller;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Model.ModelShape;
-import UI.ShapeChooser;
+import model.ModelShape;
+import ui.ShapeChooser;
+import view.SketchPad;
+import view.UIComponentFactory;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -130,8 +132,8 @@ public class Board {
 			shapeOption.setOnAction((f)->{
 			try {
 				Stage stage = new Stage();
-				Class<?> shapeClass = Class.forName("Model.Model"+shapeName);
-				Class<?> shapeEditorClass = Class.forName("UI."+shapeName+"Chooser");
+				Class<?> shapeClass = Class.forName("model.Model"+shapeName);
+				Class<?> shapeEditorClass = Class.forName("ui."+shapeName+"Chooser");
 				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
 				ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, null, new Callback<ModelShape, Integer>(){
 					@Override
@@ -141,7 +143,7 @@ public class Board {
 						return null;
 					}
 				});
-				Image anotherIcon = new Image("Resources/favicon.png");
+				Image anotherIcon = new Image("resources/favicon.png");
 		        stage.getIcons().add(anotherIcon);
 		        stage.setTitle("Yu's Lab");
 				stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));

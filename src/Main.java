@@ -1,6 +1,6 @@
 
-import Vision.StartMenu;
-import Vision.UIComponentFactory;
+import controller.StartMenu;
+import view.UIComponentFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

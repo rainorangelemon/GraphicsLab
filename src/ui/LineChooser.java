@@ -1,8 +1,8 @@
-package UI;
+package ui;
 
-import Model.ModelShape;
-import Model.ModelLine;
-import Vision.UIComponentFactory;
+import model.ModelLine;
+import model.ModelShape;
+import view.UIComponentFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

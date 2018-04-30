@@ -1,5 +1,8 @@
-package UI;
+package ui;
 
+import model.ModelCircle;
+import model.ModelShape;
+import view.UIComponentFactory;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,9 +11,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
-import Model.ModelCircle;
-import Model.ModelShape;
-import Vision.UIComponentFactory;
 
 public class CircleChooser extends ShapeChooser{
 	

@@ -1,6 +1,6 @@
-package Vision;
+package view;
 
-import Model.ModelDot;
+import model.ModelDot;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 

@@ -1,4 +1,4 @@
-package Vision;
+package view;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -10,11 +10,11 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import Model.ModelDot;
-import Model.ModelShape;
-import Model.ShapeManager;
-import UI.ImportChooser;
-import UI.ShapeChooser;
+import model.ModelDot;
+import model.ModelShape;
+import model.ShapeManager;
+import ui.ImportChooser;
+import ui.ShapeChooser;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -100,7 +100,7 @@ public class SketchPad extends Pane{
 				try {
 					Stage stage = new Stage();
 					Class<?> shapeClass = modelShape.getClass();
-					Class<?> shapeEditorClass = Class.forName("UI."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
+					Class<?> shapeEditorClass = Class.forName("ui."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
 					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
 					ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, modelShape.getColor(), modelShape, new Callback<ModelShape, Integer>(){
 						@Override
