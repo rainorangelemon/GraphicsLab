@@ -34,6 +34,7 @@ public class Board {
 	private List<String> availableShapes = new ArrayList<String>(){{
 		this.add("Line");
 		this.add("Circle");
+		this.add("Fill");
 	}};
 	private Color currentColor = Color.BLACK;
 	
@@ -47,6 +48,8 @@ public class Board {
 		mainStage.sizeToScene();
 		mainStage.centerOnScreen();
 		mainStage = UIComponentFactory.renderStage(mainStage);
+		Image anotherIcon = new Image("resources/favicon.png");
+        mainStage.getIcons().add(anotherIcon);
 		mainStage.show();
 	}
 	
@@ -109,11 +112,13 @@ public class Board {
 		Label reporter = new Label("");
 	    paper.setOnMouseMoved(new EventHandler<MouseEvent>() {
 	      @Override public void handle(MouseEvent event) {
-	        String msg =
-	          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
-	          "(width: "  + paper.getWidth() + ", height: "  + paper.getHeight()  + ")";
-
-	        reporter.setText(msg);
+	    	if((new Double(event.getY()).intValue()<paper.getDotMatrix().length)&&(new Double(event.getX()).intValue()<paper.getDotMatrix()[0].length)){
+		        String msg =
+		          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
+		          "(width: "  + paper.getWidth() + ", height: "  + paper.getHeight()  + ") -- " +
+		          "Color: " + paper.getDotMatrix()[new Double(event.getY()).intValue()][new Double(event.getX()).intValue()].getColorString();
+		        reporter.setText(msg);
+	    	}
 	      }
 	    });
 
@@ -130,29 +135,29 @@ public class Board {
 		for(String shapeName: availableShapes){
 			MenuItem shapeOption = new MenuItem(shapeName);
 			shapeOption.setOnAction((f)->{
-			try {
-				Stage stage = new Stage();
-				Class<?> shapeClass = Class.forName("model.Model"+shapeName);
-				Class<?> shapeEditorClass = Class.forName("ui."+shapeName+"Chooser");
-				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
-				ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, null, new Callback<ModelShape, Integer>(){
-					@Override
-					public Integer call(ModelShape param) {
-						stage.close();
-						paper.addNewShape(param);
-						return null;
-					}
-				});
-				Image anotherIcon = new Image("resources/favicon.png");
-		        stage.getIcons().add(anotherIcon);
-		        stage.setTitle("Yu's Lab");
-				stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
-				stage.sizeToScene();
-				stage.show();
-			} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
-				e1.printStackTrace(); //handled by exiting the program
-				System.exit(1);
-			}
+				try {
+					Stage stage = new Stage();
+					Class<?> shapeClass = Class.forName("model.Model"+shapeName);
+					Class<?> shapeEditorClass = Class.forName("ui."+shapeName+"Chooser");
+					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
+					ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, null, new Callback<ModelShape, Integer>(){
+						@Override
+						public Integer call(ModelShape param) {
+							stage.close();
+							paper.addNewShape(param);
+							return null;
+						}
+					});
+					Image anotherIcon = new Image("resources/favicon.png");
+			        stage.getIcons().add(anotherIcon);
+			        stage.setTitle("Yu's Lab");
+					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
+					stage.sizeToScene();
+					stage.show();
+				} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
+					e1.printStackTrace(); //handled by exiting the program
+					System.exit(1);
+				}
 			});
 			shapeMenu.getItems().add(shapeOption);
 		}

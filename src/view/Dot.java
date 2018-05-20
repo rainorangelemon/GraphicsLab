@@ -16,4 +16,12 @@ public class Dot extends Circle{
 	public static Dot modelDot2Dot(ModelDot modelDot){
 		return new Dot(modelDot.getX(), modelDot.getY(), modelDot.getColor());
 	}
+	
+	public String getColorString(){
+		Color color =  (Color) super.getFill();
+		return String.format( "%02X%02X%02X",
+	            (int)( color.getRed() * 255 ),
+	            (int)( color.getGreen() * 255 ),
+	            (int)( color.getBlue() * 255 ) );
+	}
 }
