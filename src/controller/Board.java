@@ -35,6 +35,7 @@ public class Board {
 		this.add("Line");
 		this.add("Circle");
 		this.add("Fill");
+		this.add("Brevier");
 	}};
 	private Color currentColor = Color.BLACK;
 	

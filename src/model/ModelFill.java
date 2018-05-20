@@ -99,6 +99,7 @@ public class ModelFill extends ModelShape{
 		Stack<ModelDot> waitingStack = new Stack<ModelDot>();
 		if(((width>seedX)&&(seedX>=0))&&((height>seedY)&&(seedY>=0))){
 			waitingStack.push(dots[seedY][seedY]);
+			visit[seedY][seedX] = true;
 			if(isInteriorPointMethod){
 				definedColor = dots[seedY][seedX].getColor();
 			}
