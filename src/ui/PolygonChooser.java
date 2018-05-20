@@ -3,10 +3,9 @@ package ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import view.UIComponentFactory;
-import model.ModelBrevier;
-import model.ModelShape;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
@@ -16,22 +15,24 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Pair;
+import model.ModelPolygon;
+import model.ModelShape;
+import view.UIComponentFactory;
 
-public class BrevierChooser extends ShapeChooser{
-
-	private ModelBrevier brevier; 
+public class PolygonChooser extends ShapeChooser{
 	private Callback<ModelShape, Integer> saver;
 	private int width, height;
+	private ModelPolygon polygon;
 	private BorderPane root;
-	
-	public BrevierChooser(int width, int height, Color color, ModelBrevier brevier, Callback<ModelShape, Integer> saver){
+
+	public PolygonChooser(int width, int height, Color color, ModelPolygon polygon, Callback<ModelShape, Integer> saver){
 		this.saver = saver;
 		this.height = height;
 		this.width = width;
-		if(brevier!=null){
-			this.brevier = brevier;
+		if(polygon!=null){
+			this.polygon = polygon;
 		}else{
-			this.brevier = new ModelBrevier(new ArrayList<Pair<Integer, Integer>>(), width, height, color);
+			this.polygon = new ModelPolygon(color, new ArrayList<Pair<Integer, Integer>>());
 		}
 	}
 	
@@ -46,29 +47,37 @@ public class BrevierChooser extends ShapeChooser{
 		buttons.getChildren().addAll(addButton, deleteButton);
 		
 		addButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(brevier.getInterpolationDots());
-			if(interPoints.size()>0){
-				Pair<Integer, Integer> last = interPoints.get(interPoints.size()-1);
-				interPoints.add(new Pair<Integer, Integer>(new Integer(last.getKey()), new Integer(last.getValue())));
+			ArrayList<Pair<Integer, Integer>> vertices = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
+			if(vertices.size()>0){
+				Pair<Integer, Integer> last = vertices.get(vertices.size()-1);
+				vertices.add(new Pair<Integer, Integer>(new Integer(last.getKey()), new Integer(last.getValue())));
 			}else{
-				interPoints.add(new Pair<Integer, Integer>(new Integer(0), new Integer(0)));
+				vertices.add(new Pair<Integer, Integer>(new Integer(0), new Integer(0)));
 			}
-			brevier.setInterpolationDots(interPoints);
-			makePointList(points);
+			if(ModelPolygon.checkConvex(vertices)){
+				polygon.setVertices(vertices);
+				makePointList(points);
+			}else{
+				makeError();
+			}
 		});
 		
 		deleteButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(brevier.getInterpolationDots());
-			if(interPoints.size()>0){
-				interPoints.remove(interPoints.size()-1);
-				interPoints.trimToSize();
+			ArrayList<Pair<Integer, Integer>> vertices = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
+			if(vertices.size()>0){
+				vertices.remove(vertices.size()-1);
+				vertices.trimToSize();
 			}
-			brevier.setInterpolationDots(interPoints);
-			makePointList(points);
+			if(ModelPolygon.checkConvex(vertices)){
+				polygon.setVertices(vertices);
+				makePointList(points);
+			}else{
+				makeError();
+			}
 		});
 		
 		Button button = new Button("Confirm");
-		button.setOnMouseClicked(e->{saver.call(brevier);});
+		button.setOnMouseClicked(e->{saver.call(polygon);});
 		
 		
 		makePointList(points);
@@ -77,10 +86,10 @@ public class BrevierChooser extends ShapeChooser{
 		root.setLeft(positionModifier);
 		
 		Label targetColor = new Label("which color you want to paint?");
-		ColorPicker targetColorPicker = super.getColorPicker(brevier.getColor(), new Callback<Color, Integer>(){
+		ColorPicker targetColorPicker = super.getColorPicker(polygon.getColor(), new Callback<Color, Integer>(){
 			@Override
 			public Integer call(Color param) {
-				brevier.setColor(param);
+				polygon.setColor(param);
 				return null;
 			}
 		});
@@ -94,7 +103,7 @@ public class BrevierChooser extends ShapeChooser{
 	
 	private void makePointList(VBox result){
 		result.getChildren().clear();
-		List<Pair<Integer, Integer>> interPoints = brevier.getInterpolationDots();
+		List<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
 		int index = 0;
 		for(Pair<Integer, Integer> pair: interPoints){
 			final int index2 = index;
@@ -107,6 +116,11 @@ public class BrevierChooser extends ShapeChooser{
 					Integer y = interPoints.get(index2).getValue();
 					interPoints.remove(index2);
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
+					if(ModelPolygon.checkConvex(interPoints)){
+						polygon.setVertices(interPoints);
+					}else{
+						makeError();
+					}
 					return null;
 				}
 				}, 
@@ -118,6 +132,11 @@ public class BrevierChooser extends ShapeChooser{
 					Integer y = param;
 					interPoints.remove(index2);
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
+					if(ModelPolygon.checkConvex(interPoints)){
+						polygon.setVertices(interPoints);
+					}else{
+						makeError();
+					}
 					return null;
 				}
 				}, 
@@ -129,5 +148,12 @@ public class BrevierChooser extends ShapeChooser{
 		if(root.getScene()!=null)
 			root.getScene().getWindow().sizeToScene();
 	}
-
+	
+	private void makeError(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Convexity Error");
+		alert.setHeaderText("The polygon after operation is not a convex polygon");
+		alert.setContentText("Please change the points of polygon and make it convex before you do the operation!");
+		alert.showAndWait();
+	}
 }

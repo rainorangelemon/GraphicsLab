@@ -34,6 +34,7 @@ public class Board {
 	private List<String> availableShapes = new ArrayList<String>(){{
 		this.add("Line");
 		this.add("Circle");
+		this.add("Polygon");
 		this.add("Fill");
 		this.add("Brevier");
 	}};
