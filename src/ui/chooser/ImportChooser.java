@@ -1,4 +1,4 @@
-package ui;
+package ui.chooser;
 
 import java.io.File;
 

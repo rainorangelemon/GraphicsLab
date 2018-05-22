@@ -15,7 +15,7 @@ public class UIComponentFactory {
 		
 	}
 	
-	public static HBox intSlider(int initialValue, int left, int right, Callback<Integer, Integer> saver, String label){
+	public static HBox unsignedIntSlider(int initialValue, int left, int right, Callback<Integer, Integer> saver, String label){
 	    HBox result =new HBox();
 	    Label levelLabel = new Label(label + String.valueOf(initialValue));
 	    Slider slider = new Slider();
@@ -41,6 +41,57 @@ public class UIComponentFactory {
 	    });
 	    result.getChildren().addAll(slider, levelLabel);
 	    return result;
+	}
+	
+	public static HBox intSlider(int initialValue, int left, int right, Callback<Integer, Integer> saver, String label){
+	    HBox result =new HBox();
+	    Label levelLabel = new Label(label + ": " + String.valueOf(initialValue));
+	    Slider slider = new Slider();
+	    slider.setMin(0);
+	    slider.setMax(right-left);
+	    slider.setValue(initialValue-left);
+	    slider.setShowTickLabels(false);
+	    slider.setShowTickMarks(true);
+	    slider.setMajorTickUnit((right-left)/2+1);
+	    slider.setMinorTickCount(5);
+	    slider.setBlockIncrement(1);
+	    slider.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov,
+				Number old_val, Number new_val) {
+				levelLabel.setText(label+": "+Math.round(slider.valueProperty().get()+new Double(left)));
+			    saver.call(Integer.parseInt(levelLabel.getText().substring(label.length() + ": ".length())));
+			}
+	    });
+	    result.getChildren().addAll(slider, levelLabel);
+	    return result;
+	}
+	
+	public static HBox doubleSlider(double initialValue, double left, double right, Callback<Double, Integer> saver, String label) {
+		HBox result =new HBox();
+		Label levelLabel = new Label(label + String.valueOf(initialValue));
+		Slider slider = new Slider();
+        levelLabel.textProperty().bind(
+                Bindings.format(
+                    label+": %.1f",
+                    slider.valueProperty()
+                )
+         );
+		slider.setMin(left);
+		slider.setMax(right);
+		slider.setValue(initialValue);
+		slider.setShowTickLabels(true);
+		slider.setShowTickMarks(true);
+		slider.setMajorTickUnit((left+right)/2+1);
+		slider.setMinorTickCount(5);
+		slider.setBlockIncrement(1);
+        slider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov,
+                Number old_val, Number new_val) {
+                    saver.call(new_val.doubleValue());
+            }
+        });
+		result.getChildren().addAll(slider, levelLabel);
+		return result;
 	}
 	
 	public static Stage renderStage(Stage stage){

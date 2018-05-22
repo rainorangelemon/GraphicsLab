@@ -7,11 +7,11 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
 public class ModelPolygon extends ModelShape{
-	private List<Pair<Integer, Integer>> vertices;
+	private ArrayList<Pair<Integer, Integer>> vertices;
 	
 	public ModelPolygon(Color color, List<Pair<Integer, Integer>> vertices){
 		super(color);
-		this.vertices = vertices;
+		this.vertices = new ArrayList<Pair<Integer, Integer>>(vertices);
 	}
 	
 	public List<Pair<Integer, Integer>> getVertices() {
@@ -19,7 +19,7 @@ public class ModelPolygon extends ModelShape{
 	}
 
 	public void setVertices(List<Pair<Integer, Integer>> vertices) {
-		this.vertices = vertices;
+		this.vertices = new ArrayList<Pair<Integer, Integer>>(vertices);
 	}
 
 	public static boolean checkConvex(List<Pair<Integer, Integer>> vertices){
@@ -63,6 +63,25 @@ public class ModelPolygon extends ModelShape{
 			}
 		}
 		return result;
+	}
+
+	@Override
+	protected void subTranslation(int offsetX, int offsetY) {
+		super.dotsTranslation(offsetX, offsetY, super.getColor(), vertices);
+		super.resetTranslation();
+	}
+
+	@Override
+	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
+		super.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), vertices);
+		super.resetRotation();
+	}
+
+	@Override
+	protected void subScaling(int scalePointX, int scalePointY,
+			double scaleSizeX, double scaleSizeY) {
+		super.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), vertices);
+		super.resetScaling();
 	}
 	
 }

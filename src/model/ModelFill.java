@@ -90,8 +90,6 @@ public class ModelFill extends ModelShape{
 		this.definedColor = definedColor;
 	}
 
-
-
 	@Override
 	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
 		boolean[][] visit = new boolean[height][width];
@@ -99,7 +97,6 @@ public class ModelFill extends ModelShape{
 		Stack<ModelDot> waitingStack = new Stack<ModelDot>();
 		if(((width>seedX)&&(seedX>=0))&&((height>seedY)&&(seedY>=0))){
 			waitingStack.push(dots[seedY][seedY]);
-			visit[seedY][seedX] = true;
 			if(isInteriorPointMethod){
 				definedColor = dots[seedY][seedX].getColor();
 			}
@@ -143,5 +140,23 @@ public class ModelFill extends ModelShape{
 			}
 		}
 		return result;
+	}
+
+	@Override
+	protected void subTranslation(int offsetX, int offsetY) {
+		// do nothing
+	}
+
+	@Override
+	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
+		// do nothing
+		
+	}
+
+	@Override
+	protected void subScaling(int scalePointX, int scalePointY,
+			double scaleSizeX, double scaleSizeY) {
+		// do nothing
+		
 	}
 }

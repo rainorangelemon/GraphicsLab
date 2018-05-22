@@ -68,4 +68,20 @@ public class ModelImport extends ModelShape{
            return new ArrayList<ModelDot>();
         }
 	}
+
+	@Override
+	protected void subTranslation(int offsetX, int offsetY) {
+		// do nothing
+	}
+
+	@Override
+	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
+		// do nothing
+	}
+
+	@Override
+	protected void subScaling(int scalePointX, int scalePointY,
+			double scaleSizeX, double scaleSizeY) {
+		// do nothing
+	}
 }

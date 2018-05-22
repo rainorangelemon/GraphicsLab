@@ -1,4 +1,4 @@
-package ui;
+package ui.chooser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class BrevierChooser extends ShapeChooser{
 			final int index2 = index;
 			Integer x = pair.getKey();
 			Integer y = pair.getValue();
-			HBox start_x = UIComponentFactory.intSlider(x, 0, width-1, new Callback<Integer, Integer>(){
+			HBox start_x = UIComponentFactory.unsignedIntSlider(x, 0, width-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
 					Integer x = param;
@@ -111,7 +111,7 @@ public class BrevierChooser extends ShapeChooser{
 				}
 				}, 
 				"point " + index +"'x");
-			HBox start_y = UIComponentFactory.intSlider(y, 0, height-1, new Callback<Integer, Integer>(){
+			HBox start_y = UIComponentFactory.unsignedIntSlider(y, 0, height-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
 					Integer x = interPoints.get(index2).getKey();

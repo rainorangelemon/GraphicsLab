@@ -28,7 +28,7 @@ public class StartMenu {
 	    mainStage=stage;
 		new UIComponentFactory();
 		root.getChildren().add(new Label("Please choose the size of picture:"));
-		root.getChildren().add(UIComponentFactory.intSlider(320, 320, 1000, new Callback<Integer, Integer>(){
+		root.getChildren().add(UIComponentFactory.unsignedIntSlider(320, 320, 1000, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				height = param;
@@ -36,7 +36,7 @@ public class StartMenu {
 			}
 			}, 
 			"height"));
-		root.getChildren().add(UIComponentFactory.intSlider(320, 320, 1000, new Callback<Integer, Integer>(){
+		root.getChildren().add(UIComponentFactory.unsignedIntSlider(320, 320, 1000, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				width = param;

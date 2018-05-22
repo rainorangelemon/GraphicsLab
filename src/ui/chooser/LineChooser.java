@@ -1,4 +1,4 @@
-package ui;
+package ui.chooser;
 
 import model.ModelLine;
 import model.ModelShape;
@@ -34,7 +34,7 @@ public class LineChooser extends ShapeChooser{
 		BorderPane root = new BorderPane();
 		VBox positionModifier = new VBox();
 		Label start = new Label("start position");
-		HBox start_x = UIComponentFactory.intSlider(line.getX0(), 0, width-1, new Callback<Integer, Integer>(){
+		HBox start_x = UIComponentFactory.unsignedIntSlider(line.getX0(), 0, width-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				line.setPos(param, line.getY0(), line.getX1(), line.getY1());
@@ -42,7 +42,7 @@ public class LineChooser extends ShapeChooser{
 			}
 			}, 
 			"x");
-		HBox start_y = UIComponentFactory.intSlider(line.getY0(), 0, height-1, new Callback<Integer, Integer>(){
+		HBox start_y = UIComponentFactory.unsignedIntSlider(line.getY0(), 0, height-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				line.setPos(line.getX0(), param, line.getX1(), line.getY1());
@@ -51,7 +51,7 @@ public class LineChooser extends ShapeChooser{
 			}, 
 			"y");
 		Label end = new Label("end position");
-		HBox end_x = UIComponentFactory.intSlider(line.getX1(), 0, width-1, new Callback<Integer, Integer>(){
+		HBox end_x = UIComponentFactory.unsignedIntSlider(line.getX1(), 0, width-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				line.setPos(line.getX0(), line.getY0(), param, line.getY1());
@@ -59,7 +59,7 @@ public class LineChooser extends ShapeChooser{
 			}
 			}, 
 			"x");
-		HBox end_y = UIComponentFactory.intSlider(line.getY1(), 0, height-1, new Callback<Integer, Integer>(){
+		HBox end_y = UIComponentFactory.unsignedIntSlider(line.getY1(), 0, height-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				line.setPos(line.getX0(), line.getY0(), line.getX1(), param);

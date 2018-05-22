@@ -1,4 +1,4 @@
-package ui;
+package ui.chooser;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;

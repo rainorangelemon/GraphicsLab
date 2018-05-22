@@ -8,14 +8,14 @@ import javafx.util.Pair;
 
 public class ModelBrevier extends ModelShape{
 
-	private List<Pair<Integer, Integer>> interpolationDots;
+	private ArrayList<Pair<Integer, Integer>> interpolationDots;
 	private int width, height;
 	
 	public ModelBrevier(List<Pair<Integer, Integer>> interpolationDots, int width, int height, Color color) {
 		super(color);
 		this.height = height;
 		this.width = width;
-		this.interpolationDots = interpolationDots;
+		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
 	}
 	
 	public List<Pair<Integer, Integer>> getInterpolationDots() {
@@ -23,7 +23,7 @@ public class ModelBrevier extends ModelShape{
 	}
 
 	public void setInterpolationDots(List<Pair<Integer, Integer>> interpolationDots) {
-		this.interpolationDots = interpolationDots;
+		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
 	}
 
 	@Override
@@ -53,6 +53,25 @@ public class ModelBrevier extends ModelShape{
 	            result.add(new ModelDot(px[0].intValue(), py[0].intValue(), super.getColor())); 
 	        }  
 		return result;
+	}
+
+	@Override
+	protected void subTranslation(int offsetX, int offsetY) {
+		super.dotsTranslation(offsetX, offsetY, super.getColor(), interpolationDots);
+		super.resetTranslation();
+	}
+
+	@Override
+	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
+		super.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), interpolationDots);
+		super.resetRotation();
+	}
+
+	@Override
+	protected void subScaling(int scalePointX, int scalePointY,
+			double scaleSizeX, double scaleSizeY) {
+		super.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), interpolationDots);
+		super.resetScaling();
 	}
 
 }

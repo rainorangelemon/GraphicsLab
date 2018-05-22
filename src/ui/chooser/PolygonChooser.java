@@ -1,7 +1,6 @@
-package ui;
+package ui.chooser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -103,18 +102,19 @@ public class PolygonChooser extends ShapeChooser{
 	
 	private void makePointList(VBox result){
 		result.getChildren().clear();
-		List<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
+		ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
 		int index = 0;
 		for(Pair<Integer, Integer> pair: interPoints){
 			final int index2 = index;
 			Integer x = pair.getKey();
 			Integer y = pair.getValue();
-			HBox start_x = UIComponentFactory.intSlider(x, 0, width-1, new Callback<Integer, Integer>(){
+			HBox start_x = UIComponentFactory.unsignedIntSlider(x, 0, width-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
 					Integer x = param;
 					Integer y = interPoints.get(index2).getValue();
 					interPoints.remove(index2);
+					interPoints.trimToSize();
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
 					if(ModelPolygon.checkConvex(interPoints)){
 						polygon.setVertices(interPoints);
@@ -125,12 +125,13 @@ public class PolygonChooser extends ShapeChooser{
 				}
 				}, 
 				"point " + index +"'x");
-			HBox start_y = UIComponentFactory.intSlider(y, 0, height-1, new Callback<Integer, Integer>(){
+			HBox start_y = UIComponentFactory.unsignedIntSlider(y, 0, height-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
 					Integer x = interPoints.get(index2).getKey();
 					Integer y = param;
 					interPoints.remove(index2);
+					interPoints.trimToSize();
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
 					if(ModelPolygon.checkConvex(interPoints)){
 						polygon.setVertices(interPoints);

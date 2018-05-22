@@ -2,24 +2,23 @@ package controller;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import model.ModelShape;
-import ui.ShapeChooser;
+import model.ShapeManager;
+import ui.chooser.ShapeChooser;
+import ui.operator.Operator;
 import view.SketchPad;
 import view.UIComponentFactory;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -31,13 +30,21 @@ public class Board {
 	private Scene scene;
 	private SketchPad paper;
 	@SuppressWarnings({ "serial" })
-	private List<String> availableShapes = new ArrayList<String>(){{
-		this.add("Line");
-		this.add("Circle");
-		this.add("Polygon");
-		this.add("Fill");
-		this.add("Brevier");
+	private Map<String, String> availableShapes = new HashMap<String, String>(){{
+		this.put("Line", "Line");
+		this.put("Circle/Oval", "Circle");
+		this.put("Polygon", "Polygon");
+		this.put("Fill", "Fill");
+		this.put("Brevier", "Brevier");
 	}};
+	
+	@SuppressWarnings("serial")
+	private Map<String, String> availableOperations = new HashMap<String, String>(){{
+		this.put("Translation", "Translation");
+		this.put("Rotation", "Rotation");
+		this.put("Scaling", "Scaling");
+	}};
+	
 	private Color currentColor = Color.BLACK;
 	
 	public Board(Stage mainStage, int height, int width){
@@ -105,42 +112,30 @@ public class Board {
 		 });
 		 editMenu.getItems().addAll(undo, redo);
 		 
-		 menuBar.getMenus().addAll(fileMenu, shapeMenu, editMenu);
+		 Menu operationMenu = addOperationOptions(height, width);
+		 
+		 menuBar.getMenus().addAll(fileMenu, shapeMenu, operationMenu, editMenu);
 		 root.setTop(menuBar);
 	}
-	
-	private void addPosInformation(Stage mainStage){
-		String OUTSIDE_TEXT = "Outside SketchPad";
-		Label reporter = new Label("");
-	    paper.setOnMouseMoved(new EventHandler<MouseEvent>() {
-	      @Override public void handle(MouseEvent event) {
-	    	if((new Double(event.getY()).intValue()<paper.getDotMatrix().length)&&(new Double(event.getX()).intValue()<paper.getDotMatrix()[0].length)){
-		        String msg =
-		          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
-		          "(width: "  + paper.getWidth() + ", height: "  + paper.getHeight()  + ") -- " +
-		          "Color: " + paper.getDotMatrix()[new Double(event.getY()).intValue()][new Double(event.getX()).intValue()].getColorString();
-		        reporter.setText(msg);
-	    	}
-	      }
-	    });
 
-	    paper.setOnMouseExited(new EventHandler<MouseEvent>() {
-	      @Override public void handle(MouseEvent event) {
-	        reporter.setText(OUTSIDE_TEXT);
-	      }
+	private void addPosInformation(Stage mainStage){
+	    paper.setOnMouseMoved(e->{
+//	    	paper.registerCheckHitOnShape().handle(e);
+	    	paper.registerCheckPosition().handle(e);
 	    });
-	    root.setBottom(reporter);
+	    root.setBottom(paper.getReport());
 	}
 	
 	private Menu addShapeOptions(int height, int width){
 		Menu shapeMenu = new Menu("Shapes");
-		for(String shapeName: availableShapes){
+		for(String shapeName: availableShapes.keySet()){
 			MenuItem shapeOption = new MenuItem(shapeName);
+			String className = availableShapes.get(shapeName);
 			shapeOption.setOnAction((f)->{
 				try {
 					Stage stage = new Stage();
-					Class<?> shapeClass = Class.forName("model.Model"+shapeName);
-					Class<?> shapeEditorClass = Class.forName("ui."+shapeName+"Chooser");
+					Class<?> shapeClass = Class.forName("model.Model"+className);
+					Class<?> shapeEditorClass = Class.forName("ui.chooser."+className+"Chooser");
 					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
 					ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, currentColor, null, new Callback<ModelShape, Integer>(){
 						@Override
@@ -164,5 +159,39 @@ public class Board {
 			shapeMenu.getItems().add(shapeOption);
 		}
 		return shapeMenu;
+	}
+	
+	private Menu addOperationOptions(int height, int width) {
+		Menu operationMenu = new Menu("Operations");
+		for(String operationName: availableOperations.keySet()){
+			MenuItem shapeOption = new MenuItem(operationName);
+			String className = availableOperations.get(operationName);
+			shapeOption.setOnAction((f)->{
+				try {
+					Stage stage = new Stage();
+					Class<?> shapeEditorClass = Class.forName("ui.operator."+className+"Operator");
+					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, ShapeManager.class, Callback.class});
+					Operator operationChooser = (Operator) chooserConstructor.newInstance(width, height, paper.getShapeManager(), new Callback<ModelShape, Integer>(){
+						@Override
+						public Integer call(ModelShape param) {
+							stage.close();
+							paper.refreshScreen(paper.getShapeManager().refresh());
+							return null;
+						}
+					});
+					Image anotherIcon = new Image("resources/favicon.png");
+			        stage.getIcons().add(anotherIcon);
+			        stage.setTitle("Yu's Lab");
+					stage.setScene(new Scene(new Pane(operationChooser.showEditor(0))));
+					stage.sizeToScene();
+					stage.show();
+				} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
+					e1.printStackTrace(); //handled by exiting the program
+					System.exit(1);
+				}
+			});
+			operationMenu.getItems().add(shapeOption);
+		}
+		return operationMenu;
 	}
 }

@@ -13,14 +13,19 @@ import javax.imageio.ImageIO;
 import model.ModelDot;
 import model.ModelShape;
 import model.ShapeManager;
-import ui.ImportChooser;
-import ui.ShapeChooser;
+import ui.chooser.ImportChooser;
+import ui.chooser.ShapeChooser;
+import ui.editor.CircleEditor;
+import ui.editor.LineEditor;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -32,6 +37,9 @@ public class SketchPad extends Pane{
 	private int height, width;
 	private Dot[][] dotMatrix;
 	private ShapeManager shapeManager;
+	private boolean isChanged = false;
+	Label reporter = new Label("");
+	static String OUTSIDE_TEXT = "Outside SketchPad";
 	private VBox stepEditor = new VBox();
 	
 	
@@ -43,6 +51,50 @@ public class SketchPad extends Pane{
 		this.width = width;
 		initAllDots();
 		shapeManager = new ShapeManager(height, width);
+	}
+	
+	public EventHandler<? super MouseEvent> registerCheckHitOnShape(){
+		return (e)-> {
+			int x = new Double(e.getX()).intValue();
+			int y = new Double(e.getY()).intValue();
+			super.getScene().getRoot().setCursor(Cursor.DEFAULT);
+//			System.out.printf("I am still here!\n");
+//			System.out.printf("%d %d\n", x, y);
+			for(int i = 0; i < 5; i++){
+				int tempX = x - i;
+				int tempY = y - i;
+				for(; tempX <= x + i; tempX++){
+					for(; tempY <= y + i; tempY++){
+						if((tempX<width)&&(tempX>=0)&&(tempY<height)&&(tempY>=0)){
+							ModelShape shape = shapeManager.getDot2modelShape()[tempY][tempX];
+							if(shape!=null){
+								System.out.printf("shape is not null\n");
+								super.getScene().getRoot().setCursor(Cursor.HAND);
+								isChanged = true;
+								new CircleEditor().editShape(this, shape);
+								return;
+							}
+						}
+					}
+				}
+			}
+			if(isChanged)
+				this.refreshScreen(shapeManager.refresh());
+		};
+	}
+	
+	public EventHandler<? super MouseEvent> registerCheckPosition(){
+		return new EventHandler<MouseEvent>() {
+		      @Override public void handle(MouseEvent event) {
+		    	if((new Double(event.getY()).intValue()< getDotMatrix().length)&&(new Double(event.getX()).intValue()< getDotMatrix()[0].length)){
+			        String msg =
+			          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
+			          "(width: "  + getWidth() + ", height: "  + getHeight()  + ") -- " +
+			          "Color: " + getDotMatrix()[new Double(event.getY()).intValue()][new Double(event.getX()).intValue()].getColorString();
+			        reporter.setText(msg);
+		    	}
+		      }
+		    };
 	}
 	
 	private void initAllDots() {
@@ -62,8 +114,9 @@ public class SketchPad extends Pane{
 	public void addNewShape(ModelShape newShape){
 		List<ModelDot> modelDots = shapeManager.addNewStep(newShape);
 		for(ModelDot newDot: modelDots){
-			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width))
+			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 				dotMatrix[newDot.getY()][newDot.getX()].changeColor(newDot.getColor());
+			}
 		}
 		refreshStepEditor();
 	}
@@ -80,7 +133,7 @@ public class SketchPad extends Pane{
 		refreshStepEditor();
 	}
 
-	private void refreshScreen(ModelDot[][] modelDots) {
+	public void refreshScreen(ModelDot[][] modelDots) {
 		for(ModelDot[] dotRow: modelDots){
 			for(ModelDot dot: dotRow){
 				dotMatrix[dot.getY()][dot.getX()].changeColor(dot.getColor());
@@ -88,7 +141,7 @@ public class SketchPad extends Pane{
 		}
 	}
 
-	private void refreshStepEditor(){
+	public void refreshStepEditor(){
 		stepEditor.getChildren().clear();
 		Label currentIndex = new Label("current index: " + new Integer(shapeManager.getCurrentIndex()-1).toString());
 		stepEditor.getChildren().add(currentIndex);
@@ -100,7 +153,7 @@ public class SketchPad extends Pane{
 				try {
 					Stage stage = new Stage();
 					Class<?> shapeClass = modelShape.getClass();
-					Class<?> shapeEditorClass = Class.forName("ui."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
+					Class<?> shapeEditorClass = Class.forName("ui.chooser."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
 					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
 					ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, modelShape.getColor(), modelShape, new Callback<ModelShape, Integer>(){
 						@Override
@@ -165,4 +218,18 @@ public class SketchPad extends Pane{
 		});
 		shapeChooser.showEditor();
 	}
+	
+	public Label getReport(){
+	    this.setOnMouseExited(new EventHandler<MouseEvent>() {
+		      @Override public void handle(MouseEvent event) {
+		        reporter.setText(OUTSIDE_TEXT);
+		      }
+		    });
+		return reporter;
+	}
+
+	public ShapeManager getShapeManager() {
+		return shapeManager;
+	}
+	
 }

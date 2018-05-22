@@ -1,4 +1,4 @@
-package ui;
+package ui.chooser;
 
 import model.ModelFill;
 import model.ModelShape;
@@ -37,7 +37,7 @@ public class FillChooser extends ShapeChooser{
 		BorderPane root = new BorderPane();
 		VBox positionModifier = new VBox();
 		Label start = new Label("seed position");
-		HBox start_x = UIComponentFactory.intSlider(fill.getSeedX(), 0, width-1, new Callback<Integer, Integer>(){
+		HBox start_x = UIComponentFactory.unsignedIntSlider(fill.getSeedX(), 0, width-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				fill.setSeedX(param);
@@ -45,7 +45,7 @@ public class FillChooser extends ShapeChooser{
 			}
 			}, 
 			"x");
-		HBox start_y = UIComponentFactory.intSlider(fill.getSeedY(), 0, height-1, new Callback<Integer, Integer>(){
+		HBox start_y = UIComponentFactory.unsignedIntSlider(fill.getSeedY(), 0, height-1, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				fill.setSeedY(param);
