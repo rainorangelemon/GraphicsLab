@@ -61,7 +61,7 @@ public class CircleChooser extends ShapeChooser{
 			}
 			}, 
 			"horizontal radius");
-		Label start_vertical_radius = new Label("the horizontal raduis of circle:");
+		Label start_vertical_radius = new Label("the vertical raduis of circle:");
 		HBox vertical_radius = UIComponentFactory.unsignedIntSlider(circle.getB(), 0, Math.min(height-1, width-1), new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
@@ -84,6 +84,8 @@ public class CircleChooser extends ShapeChooser{
 		    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 		    	if(newValue.equals(new String("MidPoint"))){
 		    		circle.setBresenham(false);
+		    	}else{
+		    		circle.setBresenham(true);
 		    	}
 		    });
 		
@@ -92,6 +94,7 @@ public class CircleChooser extends ShapeChooser{
 		positionModifier.getChildren().addAll(start, start_x, start_y, 
 				start_horizontal_radius, horizontal_radius,
 				start_vertical_radius, vertical_radius,
+				box,
 				button);
 		root.setLeft(positionModifier);
 		root.setRight(super.getColorPicker(circle.getColor(), new Callback<Color, Integer>(){

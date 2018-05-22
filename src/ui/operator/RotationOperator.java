@@ -36,15 +36,15 @@ public class RotationOperator extends Operator{
 		Label start = new Label("target shape's index");
 		ChoiceBox<String> box = new ChoiceBox<String>();
 		for(int i=0;i<manager.getSteps().size();i++){
-			box.getItems().add(new Integer(i).toString());
+			box.getItems().add(new Integer(i).toString()+ ": " + manager.getSteps().get(i).getClass().getSimpleName().substring(5));
 		}
 		if((index<manager.getSteps().size())&&(index>=0)){
-			box.getSelectionModel().select(new Integer(index).toString());
+			box.getSelectionModel().select(box.getItems().get(index));
 		}
 		box.getSelectionModel()
 		    .selectedItemProperty()
 		    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-		    	showEditor(new Integer(newValue));
+		    	showEditor(new Integer(newValue.substring(0, newValue.indexOf(':'))));
 		    });
 		shapeChooser.getChildren().addAll(start, box);
 		

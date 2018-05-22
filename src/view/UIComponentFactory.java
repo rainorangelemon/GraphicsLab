@@ -46,6 +46,7 @@ public class UIComponentFactory {
 	public static HBox intSlider(int initialValue, int left, int right, Callback<Integer, Integer> saver, String label){
 	    HBox result =new HBox();
 	    Label levelLabel = new Label(label + ": " + String.valueOf(initialValue));
+	    levelLabel.setMinWidth(levelLabel.getMinWidth()+4);
 	    Slider slider = new Slider();
 	    slider.setMin(0);
 	    slider.setMax(right-left);
@@ -63,6 +64,7 @@ public class UIComponentFactory {
 			}
 	    });
 	    result.getChildren().addAll(slider, levelLabel);
+	    result.setMinWidth(slider.getMinWidth() + levelLabel.getMinWidth() + 5);
 	    return result;
 	}
 	

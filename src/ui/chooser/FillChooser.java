@@ -69,6 +69,8 @@ public class FillChooser extends ShapeChooser{
 		    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 		    	if(newValue.equals(new String("eight connectivity"))){
 		    		fill.setConnectivityFour(false);
+		    	}else{
+		    		fill.setConnectivityFour(true);
 		    	}
 		    });
 		
@@ -85,6 +87,8 @@ public class FillChooser extends ShapeChooser{
 		    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 		    	if(newValue.equals(new String("boundary representation"))){
 		    		fill.setInteriorPointMethod(false);
+		    	}else{
+		    		fill.setInteriorPointMethod(true);
 		    	}
 		    });
 		
