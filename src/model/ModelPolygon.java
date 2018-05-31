@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation;
+import model.operation.OperationScaling;
+import model.operation.OperationTranslation;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -12,6 +15,14 @@ public class ModelPolygon extends ModelShape{
 	public ModelPolygon(Color color, List<Pair<Integer, Integer>> vertices){
 		super(color);
 		this.vertices = new ArrayList<Pair<Integer, Integer>>(vertices);
+	}
+	
+	protected ModelPolygon(ModelPolygon source){
+		super(source);
+		this.vertices = new ArrayList<Pair<Integer, Integer>>();
+		for(Pair<Integer, Integer> pair: source.vertices){
+			vertices.add(new Pair<Integer, Integer>(pair.getKey(), pair.getValue()));
+		}
 	}
 	
 	public List<Pair<Integer, Integer>> getVertices() {
@@ -66,22 +77,25 @@ public class ModelPolygon extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
-		super.dotsTranslation(offsetX, offsetY, super.getColor(), vertices);
-		super.resetTranslation();
+	public ModelPolygon translation(int offsetX, int offsetY) {
+		ModelPolygon result = new ModelPolygon(this);
+		OperationTranslation.dotsTranslation(offsetX, offsetY, super.getColor(), result.vertices);
+		return result;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
-		super.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), vertices);
-		super.resetRotation();
+	public ModelPolygon rotation(int rotationX, int rotationY, int rotationDegree) {
+		ModelPolygon result = new ModelPolygon(this);
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), result.vertices);
+		return result;
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelPolygon scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		super.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), vertices);
-		super.resetScaling();
+		ModelPolygon result = new ModelPolygon(this);
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), result.vertices);
+		return result;
 	}
 	
 }

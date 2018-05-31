@@ -12,14 +12,17 @@ import javax.imageio.ImageIO;
 
 import model.ModelDot;
 import model.ModelShape;
+import model.ModelStep;
 import model.ShapeManager;
+import model.operation.ModelOperation;
 import ui.chooser.ImportChooser;
 import ui.chooser.ShapeChooser;
-import ui.editor.CircleEditor;
-import ui.editor.LineEditor;
+//import ui.editor.CircleEditor;
+//import ui.editor.LineEditor;
+import ui.operator.Operator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
+//import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -37,7 +40,7 @@ public class SketchPad extends Pane{
 	private int height, width;
 	private Dot[][] dotMatrix;
 	private ShapeManager shapeManager;
-	private boolean isChanged = false;
+//	private boolean isChanged = false;
 	Label reporter = new Label("");
 	static String OUTSIDE_TEXT = "Outside SketchPad";
 	private VBox stepEditor = new VBox();
@@ -53,35 +56,35 @@ public class SketchPad extends Pane{
 		shapeManager = new ShapeManager(height, width);
 	}
 	
-	public EventHandler<? super MouseEvent> registerCheckHitOnShape(){
-		return (e)-> {
-			int x = new Double(e.getX()).intValue();
-			int y = new Double(e.getY()).intValue();
-			super.getScene().getRoot().setCursor(Cursor.DEFAULT);
-//			System.out.printf("I am still here!\n");
-//			System.out.printf("%d %d\n", x, y);
-			for(int i = 0; i < 5; i++){
-				int tempX = x - i;
-				int tempY = y - i;
-				for(; tempX <= x + i; tempX++){
-					for(; tempY <= y + i; tempY++){
-						if((tempX<width)&&(tempX>=0)&&(tempY<height)&&(tempY>=0)){
-							ModelShape shape = shapeManager.getDot2modelShape()[tempY][tempX];
-							if(shape!=null){
-								System.out.printf("shape is not null\n");
-								super.getScene().getRoot().setCursor(Cursor.HAND);
-								isChanged = true;
-								new CircleEditor().editShape(this, shape);
-								return;
-							}
-						}
-					}
-				}
-			}
-			if(isChanged)
-				this.refreshScreen(shapeManager.refresh());
-		};
-	}
+//	public EventHandler<? super MouseEvent> registerCheckHitOnShape(){
+//		return (e)-> {
+//			int x = new Double(e.getX()).intValue();
+//			int y = new Double(e.getY()).intValue();
+//			super.getScene().getRoot().setCursor(Cursor.DEFAULT);
+////			System.out.printf("I am still here!\n");
+////			System.out.printf("%d %d\n", x, y);
+//			for(int i = 0; i < 5; i++){
+//				int tempX = x - i;
+//				int tempY = y - i;
+//				for(; tempX <= x + i; tempX++){
+//					for(; tempY <= y + i; tempY++){
+//						if((tempX<width)&&(tempX>=0)&&(tempY<height)&&(tempY>=0)){
+//							ModelShape shape = shapeManager.getDot2modelShape()[tempY][tempX];
+//							if(shape!=null){
+//								System.out.printf("shape is not null\n");
+//								super.getScene().getRoot().setCursor(Cursor.HAND);
+//								isChanged = true;
+//								new CircleEditor().editShape(this, shape);
+//								return;
+//							}
+//						}
+//					}
+//				}
+//			}
+//			if(isChanged)
+//				this.refreshScreen(shapeManager.refresh());
+//		};
+//	}
 	
 	public EventHandler<? super MouseEvent> registerCheckPosition(){
 		return new EventHandler<MouseEvent>() {
@@ -112,13 +115,19 @@ public class SketchPad extends Pane{
 	}
 	
 	public void addNewShape(ModelShape newShape){
-		List<ModelDot> modelDots = shapeManager.addNewStep(newShape);
+		List<ModelDot> modelDots = shapeManager.addNewStepShape(newShape);
 		for(ModelDot newDot: modelDots){
 			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 				dotMatrix[newDot.getY()][newDot.getX()].changeColor(newDot.getColor());
 			}
 		}
 		refreshStepEditor();
+	}
+	
+	public void addNewOperation(ModelOperation newOperation){
+		shapeManager.addNewStepOperation(newOperation);
+		refreshStepEditor();
+		refreshScreen(shapeManager.refresh());
 	}
 	
 	public void redo(){
@@ -145,37 +154,77 @@ public class SketchPad extends Pane{
 		stepEditor.getChildren().clear();
 		Label currentIndex = new Label("current index: " + new Integer(shapeManager.getCurrentIndex()-1).toString());
 		stepEditor.getChildren().add(currentIndex);
-		Vector<ModelShape> steps = shapeManager.getSteps();
+		Vector<ModelStep> steps = shapeManager.getSteps();
 		for(int i=0;i<steps.size();i++){
-			ModelShape modelShape = steps.get(i);
-			Button newButton = new Button(new Integer(i).toString() + ": " + modelShape.getClass().getSimpleName().substring(5));
-			newButton.setOnMouseClicked(e->{
-				try {
-					Stage stage = new Stage();
-					Class<?> shapeClass = modelShape.getClass();
-					Class<?> shapeEditorClass = Class.forName("ui.chooser."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
-					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
-					ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, modelShape.getColor(), modelShape, new Callback<ModelShape, Integer>(){
-						@Override
-						public Integer call(ModelShape param) {
-							stage.close();
-							refreshScreen(shapeManager.refresh());
-							return null;
-						}
-					});
-					if(shapeChooser.showEditor()!=null){
-						stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
-						stage.sizeToScene();
-						stage.show();
-					}
-				} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
-					e1.printStackTrace(); //handled by exiting the program
-					System.exit(1);
-				}
-			});
-			stepEditor.getChildren().add(newButton);
+			if(steps.get(i) instanceof ModelShape){
+				ModelShape modelShape = (ModelShape) steps.get(i);
+				Button newButton = createShapeButton(i, modelShape);
+				stepEditor.getChildren().add(newButton);
+			}else if(steps.get(i) instanceof ModelOperation){
+				ModelOperation modelOperation = (ModelOperation) steps.get(i);
+				Button newButton = createOperationButton(i, modelOperation);
+				stepEditor.getChildren().add(newButton);
+			}
 		}
 		
+	}
+
+	private Button createOperationButton(int i, ModelOperation modelOperation) {
+		Button newButton = new Button(new Integer(i).toString() + ": " + modelOperation.getClass().getSimpleName().substring(9));
+		newButton.setOnMouseClicked(e->{
+			try {
+				Stage stage = new Stage();
+				Class<?> shapeClass = modelOperation.getClass();
+				Class<?> shapeEditorClass = Class.forName("ui.operator."+modelOperation.getClass().getSimpleName().substring(9)+"Operator");
+				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, ShapeManager.class, shapeClass, Callback.class});
+				Operator shapeChooser = (Operator) chooserConstructor.newInstance(width, height, getShapeManager(), modelOperation, new Callback<ModelOperation, Integer>(){
+					@Override
+					public Integer call(ModelOperation param) {
+						stage.close();
+						refreshScreen(shapeManager.refresh());
+						return null;
+					}
+				});
+				if(shapeChooser.showEditor()!=null){
+					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
+					stage.sizeToScene();
+					stage.show();
+				}
+			} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
+				e1.printStackTrace(); //handled by exiting the program
+				System.exit(1);
+			}
+		});
+		return newButton;
+	}
+
+	private Button createShapeButton(int i, ModelShape modelShape) {
+		Button newButton = new Button(new Integer(i).toString() + ": " + modelShape.getClass().getSimpleName().substring(5));
+		newButton.setOnMouseClicked(e->{
+			try {
+				Stage stage = new Stage();
+				Class<?> shapeClass = modelShape.getClass();
+				Class<?> shapeEditorClass = Class.forName("ui.chooser."+modelShape.getClass().getSimpleName().substring(5)+"Chooser");
+				Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, Color.class, shapeClass, Callback.class});
+				ShapeChooser shapeChooser = (ShapeChooser) chooserConstructor.newInstance(width, height, modelShape.getColor(), modelShape, new Callback<ModelShape, Integer>(){
+					@Override
+					public Integer call(ModelShape param) {
+						stage.close();
+						refreshScreen(shapeManager.refresh());
+						return null;
+					}
+				});
+				if(shapeChooser.showEditor()!=null){
+					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
+					stage.sizeToScene();
+					stage.show();
+				}
+			} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {
+				e1.printStackTrace(); //handled by exiting the program
+				System.exit(1);
+			}
+		});
+		return newButton;
 	}
 	
 	public ScrollPane getStepEditor() {

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import model.ModelShape;
 import model.ShapeManager;
+import model.operation.ModelOperation;
 import ui.chooser.ShapeChooser;
 import ui.operator.Operator;
 import view.SketchPad;
@@ -169,20 +170,21 @@ public class Board {
 			shapeOption.setOnAction((f)->{
 				try {
 					Stage stage = new Stage();
+					Class<?> shapeClass = Class.forName("model.operation.Operation"+className);
 					Class<?> shapeEditorClass = Class.forName("ui.operator."+className+"Operator");
-					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, ShapeManager.class, Callback.class});
-					Operator operationChooser = (Operator) chooserConstructor.newInstance(width, height, paper.getShapeManager(), new Callback<ModelShape, Integer>(){
+					Constructor<?> chooserConstructor = shapeEditorClass.getConstructor(new Class[]{int.class, int.class, ShapeManager.class, shapeClass, Callback.class});
+					Operator operationChooser = (Operator) chooserConstructor.newInstance(width, height, paper.getShapeManager(), null, new Callback<ModelOperation, Integer>(){
 						@Override
-						public Integer call(ModelShape param) {
+						public Integer call(ModelOperation param) {
 							stage.close();
-							paper.refreshScreen(paper.getShapeManager().refresh());
+							paper.addNewOperation(param);
 							return null;
 						}
 					});
 					Image anotherIcon = new Image("resources/favicon.png");
 			        stage.getIcons().add(anotherIcon);
 			        stage.setTitle("Yu's Lab");
-					stage.setScene(new Scene(new Pane(operationChooser.showEditor(0))));
+					stage.setScene(new Scene(new Pane(operationChooser.showEditor())));
 					stage.sizeToScene();
 					stage.show();
 				} catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e1) {

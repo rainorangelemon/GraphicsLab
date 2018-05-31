@@ -70,18 +70,21 @@ public class ModelImport extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
+	public ModelImport translation(int offsetX, int offsetY) {
 		// do nothing
+		return this;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelImport rotation(int rotationX, int rotationY, int rotationDegree) {
 		// do nothing
+		return this;
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelImport scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
 		// do nothing
+		return this;
 	}
 }

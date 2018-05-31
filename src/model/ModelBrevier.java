@@ -3,6 +3,9 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation;
+import model.operation.OperationScaling;
+import model.operation.OperationTranslation;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -16,6 +19,16 @@ public class ModelBrevier extends ModelShape{
 		this.height = height;
 		this.width = width;
 		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
+	}
+	
+	private ModelBrevier(ModelBrevier newBrevier){
+		super(newBrevier);
+		this.height = newBrevier.height;
+		this.width = newBrevier.width;
+		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>();
+		for(Pair<Integer, Integer> pair: newBrevier.interpolationDots){
+			this.interpolationDots.add(new Pair<Integer, Integer>(pair.getKey(), pair.getValue()));
+		}
 	}
 	
 	public List<Pair<Integer, Integer>> getInterpolationDots() {
@@ -56,22 +69,25 @@ public class ModelBrevier extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
-		super.dotsTranslation(offsetX, offsetY, super.getColor(), interpolationDots);
-		super.resetTranslation();
+	public ModelBrevier translation(int offsetX, int offsetY) {
+		ModelBrevier result = new ModelBrevier(this);
+		OperationTranslation.dotsTranslation(offsetX, offsetY, super.getColor(), result.interpolationDots);
+		return result;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
-		super.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), interpolationDots);
-		super.resetRotation();
+	public ModelBrevier rotation(int rotationX, int rotationY, int rotationDegree) {
+		ModelBrevier result = new ModelBrevier(this);
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), result.interpolationDots);
+		return result;
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelBrevier scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		super.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), interpolationDots);
-		super.resetScaling();
+		ModelBrevier result = new ModelBrevier(this);
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), result.interpolationDots);
+		return result;
 	}
 
 }

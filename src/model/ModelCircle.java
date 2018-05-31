@@ -3,7 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation;
+import model.operation.OperationScaling;
 import javafx.scene.paint.Color;
+import javafx.util.Pair;
 
 public class ModelCircle extends ModelShape{
 	private int xc, yc, a, b;
@@ -15,30 +18,31 @@ public class ModelCircle extends ModelShape{
 		this.bresenham = bresenham;
 		setPos(xc, yc, a, b);
 	}
+	
+	protected ModelCircle(ModelCircle target){
+		super(target);
+		this.bresenham = target.bresenham;
+		setPos(target.xc, target.yc, target.a, target.b);
+	}
 
 	@Override
 	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		List<ModelDot> originDots = new ArrayList<ModelDot>();
 		if(a==b){
-			if(bresenham)
+			if(bresenham){
 				originDots.addAll(drawBresenhamCircle());
-			else
+			}else{
 				originDots.addAll(drawMidPointCircle());
-		}else{
-			if(bresenham)
-				originDots.addAll(drawBresenhamOval());
-			else
-				originDots.addAll(drawMidPointOval());
-		}
-		// deal with rotation
-		if(super.getRotationDegree()!=0){
-			for(ModelDot dot: originDots){
-				result.addAll(super.dotRotation(super.getRotationX(), super.getRotationY(), super.getRotationDegree(), 0.3, dot));
 			}
 		}else{
-			result.addAll(originDots);
+			if(bresenham){
+				originDots.addAll(drawBresenhamOval());
+			}else{
+				originDots.addAll(drawMidPointOval());
+			}
 		}
+		result.addAll(originDots);
 		return result;
 	}
 	
@@ -229,26 +233,45 @@ public class ModelCircle extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
-		xc = xc + offsetX;
-		yc = yc + offsetY;
-		super.resetTranslation();
+	public ModelCircle translation(int offsetX, int offsetY) {
+		int newXc = xc + offsetX;
+		int newYc = yc + offsetY;
+		ModelCircle newCircle = new ModelCircle(this);
+		newCircle.setPos(newXc, newYc, a, b);
+		return newCircle;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
-		// do nothing
+	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
+		if(rotationDegree==0){
+			ModelCircle newCircle = new ModelCircle(this);
+			return newCircle;
+		}else{
+			List<Pair<Integer, Integer>> pairs = new ArrayList<Pair<Integer, Integer>>(); 
+			List<ModelDot> result = new ArrayList<ModelDot>();
+			List<ModelDot> originDots = this.getModelDots(null);
+			for(ModelDot dot: originDots){
+				result.addAll(OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 0.3, dot));
+			}
+			for(ModelDot dot: result){
+				pairs.add(new Pair<Integer, Integer>(dot.getX(), dot.getY()));
+			}
+			ModelDots newDots = new ModelDots(super.getColor(), pairs);
+			return newDots;
+		}
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelCircle scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		List<ModelDot> newCenter = super.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(xc, yc, super.getColor()));
-		xc = newCenter.get(0).getX();
-		yc = newCenter.get(0).getY();
-		a = (int) Math.round((double)a * scaleSizeX);
-		b= (int) Math.round((double)b* scaleSizeY);
-		super.resetScaling();
+		List<ModelDot> newCenter = OperationScaling.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(xc, yc, super.getColor()));
+		int newXc = newCenter.get(0).getX();
+		int newYc = newCenter.get(0).getY();
+		int newA = (int) Math.round((double)a * scaleSizeX);
+		int newB= (int) Math.round((double)b* scaleSizeY);
+		ModelCircle newCircle = new ModelCircle(this);
+		newCircle.setPos(newXc, newYc, newA, newB);
+		return newCircle;
 	}
 
 }

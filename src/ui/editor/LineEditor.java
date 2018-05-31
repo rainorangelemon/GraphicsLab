@@ -23,7 +23,7 @@ public class LineEditor extends ShapeEditor{
 		return e->{
 			if(e.getClickCount() == 2){
 				paper.setOnMouseMoved(h->{
-					paper.registerCheckHitOnShape().handle(h);
+//					paper.registerCheckHitOnShape().handle(h);
 					paper.registerCheckPosition().handle(h);
 				});
 				paper.setOnMouseClicked(h->{

@@ -143,20 +143,18 @@ public class ModelFill extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
-		// do nothing
+	public ModelFill translation(int offsetX, int offsetY) {
+		return this;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
-		// do nothing
-		
+	public ModelFill rotation(int rotationX, int rotationY, int rotationDegree) {
+		return this;
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelFill scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		// do nothing
-		
+		return this;
 	}
 }

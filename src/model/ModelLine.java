@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation;
+import model.operation.OperationScaling;
 import javafx.scene.paint.Color;
 
 public class ModelLine extends ModelShape{
@@ -82,34 +84,37 @@ public class ModelLine extends ModelShape{
 	}
 
 	@Override
-	protected void subTranslation(int offsetX, int offsetY) {
-		x0 = x0 + offsetX;
-		x1 = x1 + offsetX;
-		y0 = y0 + offsetY;
-		y1 = y1 + offsetY;
-		super.resetTranslation();
+	public ModelLine translation(int offsetX, int offsetY) {
+		int newX0 = x0 + offsetX;
+		int newX1 = x1 + offsetX;
+		int newY0 = y0 + offsetY;
+		int newY1 = y1 + offsetY;
+		ModelLine result = new ModelLine(newX0, newX1, newY0, newY1, super.getColor());
+		return result;
 	}
 
 	@Override
-	protected void subRotation(int rotationX, int rotationY, int rotationDegree) {
-		List<ModelDot> newPoint0 = super.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x0, y0, super.getColor()));
-		List<ModelDot> newPoint1 = super.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x1, y1, super.getColor())); 
-		x0 = newPoint0.get(0).getX();
-		y0 = newPoint0.get(0).getY();
-		x1 = newPoint1.get(0).getX();
-		y1 = newPoint1.get(0).getY();
-		super.resetRotation();
+	public ModelLine rotation(int rotationX, int rotationY, int rotationDegree) {
+		List<ModelDot> newPoint0 = OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x0, y0, super.getColor()));
+		List<ModelDot> newPoint1 = OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x1, y1, super.getColor())); 
+		int newX0 = newPoint0.get(0).getX();
+		int newY0 = newPoint0.get(0).getY();
+		int newX1 = newPoint1.get(0).getX();
+		int newY1 = newPoint1.get(0).getY();
+		ModelLine result = new ModelLine(newX0, newX1, newY0, newY1, super.getColor());
+		return result;
 	}
 
 	@Override
-	protected void subScaling(int scalePointX, int scalePointY,
+	public ModelLine scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		List<ModelDot> newPoint0 = super.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(x0, y0, super.getColor()));
-		List<ModelDot> newPoint1 = super.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(x1, y1, super.getColor()));
-		x0 = newPoint0.get(0).getX();
-		y0 = newPoint0.get(0).getY();
-		x1 = newPoint1.get(0).getX();
-		y1 = newPoint1.get(0).getY();
-		super.resetScaling();
+		List<ModelDot> newPoint0 = OperationScaling.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(x0, y0, super.getColor()));
+		List<ModelDot> newPoint1 = OperationScaling.dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(x1, y1, super.getColor()));
+		int newX0 = newPoint0.get(0).getX();
+		int newY0 = newPoint0.get(0).getY();
+		int newX1 = newPoint1.get(0).getX();
+		int newY1 = newPoint1.get(0).getY();
+		ModelLine result = new ModelLine(newX0, newX1, newY0, newY1, super.getColor());
+		return result;
 	}
 }
