@@ -157,4 +157,11 @@ public class ModelFill extends ModelShape{
 			double scaleSizeX, double scaleSizeY) {
 		return this;
 	}
+
+
+
+	@Override
+	public ModelShape clip(int windowX0, int windowY0, int windowX1, int windowY1) {
+		return this;
+	}
 }

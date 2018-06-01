@@ -155,7 +155,7 @@ public class SketchPad extends Pane{
 		Label currentIndex = new Label("current index: " + new Integer(shapeManager.getCurrentIndex()-1).toString());
 		stepEditor.getChildren().add(currentIndex);
 		Vector<ModelStep> steps = shapeManager.getSteps();
-		for(int i=0;i<steps.size();i++){
+		for(int i=0;i<shapeManager.getCurrentIndex();i++){
 			if(steps.get(i) instanceof ModelShape){
 				ModelShape modelShape = (ModelShape) steps.get(i);
 				Button newButton = createShapeButton(i, modelShape);

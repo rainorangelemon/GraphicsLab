@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationClip;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
 import model.operation.OperationTranslation;
@@ -71,14 +72,18 @@ public class ModelBrevier extends ModelShape{
 	@Override
 	public ModelBrevier translation(int offsetX, int offsetY) {
 		ModelBrevier result = new ModelBrevier(this);
-		OperationTranslation.dotsTranslation(offsetX, offsetY, super.getColor(), result.interpolationDots);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
+		OperationTranslation.dotsTranslation(offsetX, offsetY, pivots);
+		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
 	@Override
 	public ModelBrevier rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelBrevier result = new ModelBrevier(this);
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), result.interpolationDots);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, pivots);
+		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
@@ -86,8 +91,18 @@ public class ModelBrevier extends ModelShape{
 	public ModelBrevier scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
 		ModelBrevier result = new ModelBrevier(this);
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), result.interpolationDots);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, pivots);
+		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
+	@Override
+	public ModelShape clip(int windowX0, int windowY0, int windowX1,
+			int windowY1) {
+		List<ModelDot> dots = this.getModelDots(null);
+		List<ModelDot> newDots = OperationClip.dotsClip(windowX0, windowY0, windowX1, windowY1, dots);
+		ModelDots result = new ModelDots(newDots);
+		return result;
+	}
 }

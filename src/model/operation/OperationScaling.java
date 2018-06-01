@@ -3,8 +3,6 @@ package model.operation;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import model.ModelDot;
 import model.ModelShape;
 
@@ -40,14 +38,14 @@ public class OperationScaling extends ModelOperation{
 	
 	public static void dotsScaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY, 
-			Color color, ArrayList<Pair<Integer, Integer>> dots) {
+			ArrayList<ModelDot> dots) {
 		int size = dots.size();
 		for(int i=0; i<size; i++){
-			Pair<Integer, Integer> oldDot = dots.get(i);
-			List<ModelDot> newDot = dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(oldDot.getKey(), oldDot.getValue(), color));
+			ModelDot oldDot = dots.get(i);
+			List<ModelDot> newDot = dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
 			dots.remove(i);
 			dots.trimToSize();
-			dots.add(i, new Pair<Integer, Integer>(newDot.get(0).getX(), newDot.get(0).getY()));
+			dots.add(i, newDot.get(0));
 		}
 	}
 

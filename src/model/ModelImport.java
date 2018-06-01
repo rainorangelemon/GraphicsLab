@@ -8,6 +8,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import model.operation.OperationClip;
+import model.operation.OperationRotation;
+import model.operation.OperationScaling;
+import model.operation.OperationTranslation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,7 +35,6 @@ public class ModelImport extends ModelShape{
 		result.addAll(drawPics());
 		return result;
 	}
-	
 
 	public File getFile() {
 		return file;
@@ -70,21 +73,32 @@ public class ModelImport extends ModelShape{
 	}
 
 	@Override
-	public ModelImport translation(int offsetX, int offsetY) {
-		// do nothing
-		return this;
+	public ModelShape translation(int offsetX, int offsetY) {
+		ModelDots result = new ModelDots(this.drawPics());
+		OperationTranslation.dotsTranslation(offsetX, offsetY, result.getDots());
+		return result;
 	}
 
 	@Override
-	public ModelImport rotation(int rotationX, int rotationY, int rotationDegree) {
-		// do nothing
-		return this;
+	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
+		ModelDots result = new ModelDots(this.drawPics());
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, result.getDots());
+		return result;
 	}
 
 	@Override
-	public ModelImport scaling(int scalePointX, int scalePointY,
+	public ModelShape scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		// do nothing
-		return this;
+		ModelDots result = new ModelDots(this.drawPics());
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, result.getDots());
+		return result;
+	}
+
+	@Override
+	public ModelShape clip(int windowX0, int windowY0, int windowX1, int windowY1) {
+		List<ModelDot> dots = this.drawPics();
+		List<ModelDot> newDots = OperationClip.dotsClip(windowX0, windowY0, windowX1, windowY1, dots);
+		ModelDots result = new ModelDots(newDots);
+		return result;
 	}
 }

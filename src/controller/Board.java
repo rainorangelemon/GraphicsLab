@@ -44,6 +44,7 @@ public class Board {
 		this.put("Translation", "Translation");
 		this.put("Rotation", "Rotation");
 		this.put("Scaling", "Scaling");
+		this.put("Clip", "Clip");
 	}};
 	
 	private Color currentColor = Color.BLACK;

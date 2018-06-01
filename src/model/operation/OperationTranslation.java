@@ -2,8 +2,6 @@ package model.operation;
 
 import java.util.ArrayList;
 
-import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import model.ModelDot;
 import model.ModelShape;
 
@@ -25,14 +23,14 @@ public class OperationTranslation extends ModelOperation{
 		return new ModelDot(dot.getX()+offsetX, dot.getY()+offsetY, dot.getColor());
 	}
 	
-	public static void dotsTranslation(int offsetX, int offsetY, Color color, ArrayList<Pair<Integer, Integer>> dots){
+	public static void dotsTranslation(int offsetX, int offsetY, ArrayList<ModelDot> dots){
 		int size = dots.size();
 		for(int i=0; i<size; i++){
-			Pair<Integer, Integer> oldDot = dots.get(i);
-			ModelDot newDot = dotTranslation(offsetX, offsetY, new ModelDot(oldDot.getKey(), oldDot.getValue(), color));
+			ModelDot oldDot = dots.get(i);
+			ModelDot newDot = dotTranslation(offsetX, offsetY, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
 			dots.remove(i);
 			dots.trimToSize();
-			dots.add(i, new Pair<Integer, Integer>(newDot.getX(), newDot.getY()));
+			dots.add(i, newDot);
 		}
 	}
 

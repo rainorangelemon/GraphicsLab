@@ -3,10 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationClip;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 
 public class ModelCircle extends ModelShape{
 	private int xc, yc, a, b;
@@ -247,16 +247,12 @@ public class ModelCircle extends ModelShape{
 			ModelCircle newCircle = new ModelCircle(this);
 			return newCircle;
 		}else{
-			List<Pair<Integer, Integer>> pairs = new ArrayList<Pair<Integer, Integer>>(); 
 			List<ModelDot> result = new ArrayList<ModelDot>();
 			List<ModelDot> originDots = this.getModelDots(null);
 			for(ModelDot dot: originDots){
 				result.addAll(OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 0.3, dot));
 			}
-			for(ModelDot dot: result){
-				pairs.add(new Pair<Integer, Integer>(dot.getX(), dot.getY()));
-			}
-			ModelDots newDots = new ModelDots(super.getColor(), pairs);
+			ModelDots newDots = new ModelDots(result);
 			return newDots;
 		}
 	}
@@ -272,6 +268,14 @@ public class ModelCircle extends ModelShape{
 		ModelCircle newCircle = new ModelCircle(this);
 		newCircle.setPos(newXc, newYc, newA, newB);
 		return newCircle;
+	}
+
+	@Override
+	public ModelShape clip(int windowX0, int windowY0, int windowX1, int windowY1) {
+		List<ModelDot> dots = this.getModelDots(null);
+		List<ModelDot> newDots = OperationClip.dotsClip(windowX0, windowY0, windowX1, windowY1, dots);
+		ModelDots result = new ModelDots(newDots);
+		return result;
 	}
 
 }

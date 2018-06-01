@@ -79,14 +79,18 @@ public class ModelPolygon extends ModelShape{
 	@Override
 	public ModelPolygon translation(int offsetX, int offsetY) {
 		ModelPolygon result = new ModelPolygon(this);
-		OperationTranslation.dotsTranslation(offsetX, offsetY, super.getColor(), result.vertices);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
+		OperationTranslation.dotsTranslation(offsetX, offsetY, pivots);
+		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
 	@Override
 	public ModelPolygon rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelPolygon result = new ModelPolygon(this);
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, super.getColor(), result.vertices);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, pivots);
+		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
@@ -94,8 +98,17 @@ public class ModelPolygon extends ModelShape{
 	public ModelPolygon scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
 		ModelPolygon result = new ModelPolygon(this);
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, super.getColor(), result.vertices);
+		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, pivots);
+		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
+	}
+
+	@Override
+	public ModelShape clip(int windowX0, int windowY0, int windowX1,
+			int windowY1) {
+		// TODO finish Weiler-Atherton algorithm
+		return null;
 	}
 	
 }

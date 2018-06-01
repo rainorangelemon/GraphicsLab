@@ -86,7 +86,7 @@ public class ShapeManager {
 				for(int i=step+1; i<currentIndex; i++){
 					if(steps.get(i) instanceof ModelOperation){
 						ModelOperation operation = (ModelOperation) steps.get(i);
-						if(operation.getShapeIndex() == step){
+						if(operation.getShapeIndexes().contains(step)){
 							shape = operation.operate(shape);
 						}
 					}

@@ -117,4 +117,36 @@ public class ModelLine extends ModelShape{
 		ModelLine result = new ModelLine(newX0, newX1, newY0, newY1, super.getColor());
 		return result;
 	}
+
+	
+	// Liang-Barsky Algorithm
+	@Override
+	public ModelShape clip(int Xmin, int Ymin, int Xmax, int Ymax) {
+		int deltaX = x1 - x0;
+		int deltaY = y1 - y0;
+		int[] p = {-deltaX, deltaX, -deltaY, deltaY};
+		int[] q = {x0 - Xmin, Xmax - x0, y0 - Ymin, Ymax - y0};
+		double u1 = 0;
+		double u2 = 1;
+		for(int i=0; i < 4; i++){
+			double r = ((double)q[i])/((double)p[i]);
+			if(p[i]<0){
+				u1 = Math.max(u1, r);
+			}else if(p[i]>0){
+				u1 = Math.min(u2, r);
+			}else{
+				if(q[i]<0){
+					return new ModelDots(new ArrayList<ModelDot>());
+				}else{
+					// do nothing
+				}
+			}
+			if(u1 > u2){
+				return new ModelDots(new ArrayList<ModelDot>());
+			}else{
+				// do nothing
+			}
+		}
+		return new ModelLine((int)Math.round(u1*deltaX + x0), (int)Math.round(u2*deltaX + x0), (int)Math.round(u1*deltaY + y0), (int)Math.round(u2*deltaY + y0), super.getColor());
+	}
 }
