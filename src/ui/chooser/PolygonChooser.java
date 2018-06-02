@@ -1,6 +1,7 @@
 package ui.chooser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -40,47 +41,10 @@ public class PolygonChooser extends ShapeChooser{
 		root = new BorderPane();
 		VBox positionModifier = new VBox();
 		VBox points = new VBox();
-		Button addButton = new Button("add a new point");
-		Button deleteButton = new Button("delete the last point");
-		HBox buttons = new HBox();
-		buttons.getChildren().addAll(addButton, deleteButton);
-		
-		addButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> vertices = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
-			if(vertices.size()>0){
-				Pair<Integer, Integer> last = vertices.get(vertices.size()-1);
-				vertices.add(new Pair<Integer, Integer>(new Integer(last.getKey()), new Integer(last.getValue())));
-			}else{
-				vertices.add(new Pair<Integer, Integer>(new Integer(0), new Integer(0)));
-			}
-			if(ModelPolygon.checkConvex(vertices)){
-				polygon.setVertices(vertices);
-				makePointList(points);
-			}else{
-				makeError();
-			}
-		});
-		
-		deleteButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> vertices = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
-			if(vertices.size()>0){
-				vertices.remove(vertices.size()-1);
-				vertices.trimToSize();
-			}
-			if(ModelPolygon.checkConvex(vertices)){
-				polygon.setVertices(vertices);
-				makePointList(points);
-			}else{
-				makeError();
-			}
-		});
-		
-		Button button = new Button("Confirm");
-		button.setOnMouseClicked(e->{saver.call(polygon);});
 		
 		
-		makePointList(points);
-		positionModifier.getChildren().addAll(buttons, points, button);
+		makePointList(points, polygon.getVertices());
+		positionModifier.getChildren().addAll(points);
 		
 		root.setLeft(positionModifier);
 		
@@ -100,9 +64,35 @@ public class PolygonChooser extends ShapeChooser{
 		return root;
 	}
 	
-	private void makePointList(VBox result){
+	private void makePointList(VBox result, List<Pair<Integer, Integer>> vertices){
 		result.getChildren().clear();
-		ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(polygon.getVertices());
+		
+		Button addButton = new Button("add a new point");
+		Button deleteButton = new Button("delete the last point");
+		HBox buttons = new HBox();
+		buttons.getChildren().addAll(addButton, deleteButton);
+		
+		ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(vertices);
+		
+		addButton.setOnMouseClicked(e->{
+			if(interPoints.size()>0){
+				Pair<Integer, Integer> last = interPoints.get(interPoints.size()-1);
+				interPoints.add(new Pair<Integer, Integer>(new Integer(last.getKey()), new Integer(last.getValue())));
+			}else{
+				interPoints.add(new Pair<Integer, Integer>(new Integer(0), new Integer(0)));
+			}
+			makePointList(result, interPoints);
+		});
+		
+		deleteButton.setOnMouseClicked(e->{
+			if(interPoints.size()>0){
+				interPoints.remove(interPoints.size()-1);
+				interPoints.trimToSize();
+			}
+			makePointList(result, interPoints);
+		});
+		result.getChildren().add(buttons);
+
 		int index = 0;
 		for(Pair<Integer, Integer> pair: interPoints){
 			final int index2 = index;
@@ -116,11 +106,6 @@ public class PolygonChooser extends ShapeChooser{
 					interPoints.remove(index2);
 					interPoints.trimToSize();
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
-					if(ModelPolygon.checkConvex(interPoints)){
-						polygon.setVertices(interPoints);
-					}else{
-						makeError();
-					}
 					return null;
 				}
 				}, 
@@ -133,11 +118,6 @@ public class PolygonChooser extends ShapeChooser{
 					interPoints.remove(index2);
 					interPoints.trimToSize();
 					interPoints.add(index2, new Pair<Integer, Integer>(x, y));
-					if(ModelPolygon.checkConvex(interPoints)){
-						polygon.setVertices(interPoints);
-					}else{
-						makeError();
-					}
 					return null;
 				}
 				}, 
@@ -146,15 +126,40 @@ public class PolygonChooser extends ShapeChooser{
 			result.getChildren().add(start_y);
 			index ++;
 		}
-		if(root.getScene()!=null)
+		
+		Button button = new Button("Confirm");
+		button.setOnMouseClicked(e->{
+			if(ModelPolygon.checkConvex(interPoints)){
+				if(interPoints.size()>2){
+					polygon.setVertices(interPoints);
+					saver.call(polygon);
+				}else{
+					makeSizeError();
+				}
+			}else{
+				makeConvexError();
+			}
+		});
+		result.getChildren().add(button);
+		
+		if(root.getScene()!=null){
 			root.getScene().getWindow().sizeToScene();
+		}
 	}
 	
-	private void makeError(){
+	private void makeConvexError(){
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Convexity Error");
 		alert.setHeaderText("The polygon after operation is not a convex polygon");
 		alert.setContentText("Please change the points of polygon and make it convex before you do the operation!");
+		alert.showAndWait();
+	}
+	
+	private void makeSizeError(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Number of Vertices Error");
+		alert.setHeaderText("A polygon should have at least three vertices");
+		alert.setContentText("Please change the points of polygon and make there at least three vertices before you do the operation!");
 		alert.showAndWait();
 	}
 }

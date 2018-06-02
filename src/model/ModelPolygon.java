@@ -37,14 +37,14 @@ public class ModelPolygon extends ModelShape{
         int num = vertices.size();
         boolean isNegative = false;
         boolean isPositive = false;
-        for (int i = 0; i < num;i++)  
+        for (int i = 0; i < num; i++)  
         {  
              if((isNegative==true)&&(isPositive==true)){
             	 return false;
              }else{
             	 int direction = crossProduct(vertices.get(i), vertices.get((i+1)%num), vertices.get((i+2)%num));
             	 isNegative = (isNegative==true)?true:(direction<0);
-            	 isPositive = (isNegative==true)?true:(direction>0);
+            	 isPositive = (isPositive==true)?true:(direction>0);
              }
         }  
         return true;  
@@ -114,7 +114,11 @@ public class ModelPolygon extends ModelShape{
 			tempVer = cutPolygonOneSide(tempVer, true, false, windowX0, windowY0, windowX1, windowY1);
 			tempVer = cutPolygonOneSide(tempVer, false, true, windowX0, windowY0, windowX1, windowY1);
 			tempVer = cutPolygonOneSide(tempVer, false, false, windowX0, windowY0, windowX1, windowY1);
-			return new ModelPolygon(super.getColor(), tempVer);
+			if(tempVer.size()>2){
+				return new ModelPolygon(super.getColor(), tempVer); // a polygon should have more than two vertices
+			}else{
+				return new ModelDots(new ArrayList<ModelDot>());
+			}
 		}else{
 			return new ModelDots(new ArrayList<ModelDot>());
 		}
