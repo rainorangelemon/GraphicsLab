@@ -1,9 +1,11 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import model.operation.ModelOperation;
+import model.operation.OperationClip;
 import javafx.scene.paint.Color;
 
 public class ShapeManager {
@@ -85,13 +87,37 @@ public class ShapeManager {
 				ModelShape shape = (ModelShape) steps.get(step);
 				for(int i=step+1; i<currentIndex; i++){
 					if(steps.get(i) instanceof ModelOperation){
-						ModelOperation operation = (ModelOperation) steps.get(i);
-						if(operation.getShapeIndexes().contains(step)){
-							shape = operation.operate(shape);
+						if(!(steps.get(i) instanceof OperationClip)){
+							ModelOperation operation = (ModelOperation) steps.get(i);
+							if(operation.getShapeIndexes().contains(step)){
+								shape = operation.operate(shape);
+							}
 						}
 					}
 				}
 				List<ModelDot> newDots = shape.getModelDots(dots);
+				for(ModelDot newDot: newDots){
+					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
+						dots[newDot.getY()][newDot.getX()].color = newDot.color;
+//						dot2modelShape[newDot.getY()][newDot.getX()] = steps.get(step);
+					}
+				}
+			}else if(steps.get(step) instanceof OperationClip){
+				List<ModelDot> newDots = new ArrayList<ModelDot>();
+				OperationClip clip = (OperationClip) steps.get(step);
+				for(Integer index: clip.getShapeIndexes()){
+					ModelShape clipShape = (ModelShape) steps.get(index);
+					if((clipShape instanceof ModelLine)||(clipShape instanceof ModelPolygon)){
+						newDots.addAll(clip.operate(clipShape).getModelDots(dots));
+					}
+				}
+				for(int y=0;y<height;y++){
+					for(int x=0;x<width;x++){
+						if((y<clip.getWindowY0())||(y>clip.getWindowY1())||(x<clip.getWindowX0())||(x>clip.getWindowX1())){
+							dots[y][x].color = Color.WHITE;
+						}
+					}
+				}
 				for(ModelDot newDot: newDots){
 					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 						dots[newDot.getY()][newDot.getX()].color = newDot.color;
