@@ -126,14 +126,14 @@ public class ModelLine extends ModelShape{
 		int deltaY = y1 - y0;
 		int[] p = {-deltaX, deltaX, -deltaY, deltaY};
 		int[] q = {x0 - Xmin, Xmax - x0, y0 - Ymin, Ymax - y0};
-		double u1 = 0;
-		double u2 = 1;
+		double u1 = 0.0;
+		double u2 = 1.0;
 		for(int i=0; i < 4; i++){
 			double r = ((double)q[i])/((double)p[i]);
 			if(p[i]<0){
 				u1 = Math.max(u1, r);
 			}else if(p[i]>0){
-				u1 = Math.min(u2, r);
+				u2 = Math.min(u2, r);
 			}else{
 				if(q[i]<0){
 					return new ModelDots(new ArrayList<ModelDot>());
