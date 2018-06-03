@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import view.UIComponentFactory;
-import model.ModelBrevier;
+import model.ModelBezier;
 import model.ModelShape;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -17,21 +17,21 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
-public class BrevierChooser extends ShapeChooser{
+public class BezierChooser extends ShapeChooser{
 
-	private ModelBrevier brevier; 
+	private ModelBezier brevier; 
 	private Callback<ModelShape, Integer> saver;
 	private int width, height;
 	private BorderPane root;
 	
-	public BrevierChooser(int width, int height, Color color, ModelBrevier brevier, Callback<ModelShape, Integer> saver){
+	public BezierChooser(int width, int height, Color color, ModelBezier brevier, Callback<ModelShape, Integer> saver){
 		this.saver = saver;
 		this.height = height;
 		this.width = width;
 		if(brevier!=null){
 			this.brevier = brevier;
 		}else{
-			this.brevier = new ModelBrevier(new ArrayList<Pair<Integer, Integer>>(), width, height, color);
+			this.brevier = new ModelBezier(new ArrayList<Pair<Integer, Integer>>(), width, height, color);
 		}
 	}
 	

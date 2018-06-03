@@ -10,19 +10,19 @@ import model.operation.OperationTranslation;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
-public class ModelBrevier extends ModelShape{
+public class ModelBezier extends ModelShape{
 
 	private ArrayList<Pair<Integer, Integer>> interpolationDots;
 	private int width, height;
 	
-	public ModelBrevier(List<Pair<Integer, Integer>> interpolationDots, int width, int height, Color color) {
+	public ModelBezier(List<Pair<Integer, Integer>> interpolationDots, int width, int height, Color color) {
 		super(color);
 		this.height = height;
 		this.width = width;
 		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
 	}
 	
-	private ModelBrevier(ModelBrevier newBrevier){
+	private ModelBezier(ModelBezier newBrevier){
 		super(newBrevier);
 		this.height = newBrevier.height;
 		this.width = newBrevier.width;
@@ -70,8 +70,8 @@ public class ModelBrevier extends ModelShape{
 	}
 
 	@Override
-	public ModelBrevier translation(int offsetX, int offsetY) {
-		ModelBrevier result = new ModelBrevier(this);
+	public ModelBezier translation(int offsetX, int offsetY) {
+		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
 		OperationTranslation.dotsTranslation(offsetX, offsetY, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
@@ -79,8 +79,8 @@ public class ModelBrevier extends ModelShape{
 	}
 
 	@Override
-	public ModelBrevier rotation(int rotationX, int rotationY, int rotationDegree) {
-		ModelBrevier result = new ModelBrevier(this);
+	public ModelBezier rotation(int rotationX, int rotationY, int rotationDegree) {
+		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
 		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
@@ -88,9 +88,9 @@ public class ModelBrevier extends ModelShape{
 	}
 
 	@Override
-	public ModelBrevier scaling(int scalePointX, int scalePointY,
+	public ModelBezier scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		ModelBrevier result = new ModelBrevier(this);
+		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
 		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));

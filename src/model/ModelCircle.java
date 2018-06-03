@@ -119,6 +119,7 @@ public class ModelCircle extends ModelShape{
 	    return result;
 	}
 	
+	// bresenham in circle
 	private List<ModelDot> drawBresenhamCircle(){
 		Color color = super.getColor();
 		int r = a;
