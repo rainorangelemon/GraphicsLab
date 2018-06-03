@@ -120,7 +120,13 @@ public class ModelPolygon extends ModelShape{
 				return new ModelDots(new ArrayList<ModelDot>());
 			}
 		}else{
-			return new ModelDots(new ArrayList<ModelDot>());
+			// the window is inside the polygon
+			ArrayList<Pair<Integer, Integer>> tempVer = new ArrayList<Pair<Integer, Integer>>();
+			tempVer.add(new Pair<Integer, Integer>(windowX0, windowY0));
+			tempVer.add(new Pair<Integer, Integer>(windowX1, windowY0));
+			tempVer.add(new Pair<Integer, Integer>(windowX1, windowY1));
+			tempVer.add(new Pair<Integer, Integer>(windowX0, windowY1));
+			return new ModelPolygon(super.getColor(), tempVer);
 		}
 	}
 	
