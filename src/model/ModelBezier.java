@@ -22,12 +22,12 @@ public class ModelBezier extends ModelShape{
 		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
 	}
 	
-	private ModelBezier(ModelBezier newBrevier){
-		super(newBrevier);
-		this.height = newBrevier.height;
-		this.width = newBrevier.width;
+	private ModelBezier(ModelBezier newBezier){
+		super(newBezier);
+		this.height = newBezier.height;
+		this.width = newBezier.width;
 		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>();
-		for(Pair<Integer, Integer> pair: newBrevier.interpolationDots){
+		for(Pair<Integer, Integer> pair: newBezier.interpolationDots){
 			this.interpolationDots.add(new Pair<Integer, Integer>(pair.getKey(), pair.getValue()));
 		}
 	}
