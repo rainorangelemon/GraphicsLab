@@ -89,7 +89,7 @@ public class ModelPolygon extends ModelShape{
 	public ModelPolygon rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelPolygon result = new ModelPolygon(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, pivots);
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, false, 1.0, pivots);
 		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
 	}
@@ -99,11 +99,12 @@ public class ModelPolygon extends ModelShape{
 			double scaleSizeX, double scaleSizeY) {
 		ModelPolygon result = new ModelPolygon(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, pivots);
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, false, 1.0, pivots);
 		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
 	}
 
+	// Sutherland-Hodgeman
 	@Override
 	public ModelShape clip(int windowX0, int windowY0, int windowX1, int windowY1) {
 		if(allInsideWindow(vertices, windowX0, windowY0, windowX1, windowY1)){

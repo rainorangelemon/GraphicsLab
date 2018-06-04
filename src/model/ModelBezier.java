@@ -40,6 +40,7 @@ public class ModelBezier extends ModelShape{
 		this.interpolationDots = new ArrayList<Pair<Integer, Integer>>(interpolationDots);
 	}
 
+	// Bezier Algorithm
 	@Override
 	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
@@ -56,8 +57,8 @@ public class ModelBezier extends ModelShape{
 	            for (int i = 0; i <= n; i++) {  
 	            	px[i] = new Double(this.interpolationDots.get(i).getKey());
 	            	py[i] = new Double(this.interpolationDots.get(i).getValue()); 
-	            }  
-	  
+	            }
+
 	            for (int r = 1; r <= n; r++) {  
 	                for (int i = 0; i <= n - r; i++) {  
 	                    px[i] = (1 - iter_id) * px[i] + iter_id * px[i + 1];  
@@ -65,7 +66,7 @@ public class ModelBezier extends ModelShape{
 	                }  
 	            }
 	            result.add(new ModelDot(px[0].intValue(), py[0].intValue(), super.getColor())); 
-	        }  
+	    }  
 		return result;
 	}
 
@@ -82,7 +83,7 @@ public class ModelBezier extends ModelShape{
 	public ModelBezier rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, pivots);
+		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, false, 1.0, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}
@@ -92,7 +93,7 @@ public class ModelBezier extends ModelShape{
 			double scaleSizeX, double scaleSizeY) {
 		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, pivots);
+		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, false, 1.0, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}

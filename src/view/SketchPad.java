@@ -56,36 +56,6 @@ public class SketchPad extends Pane{
 		shapeManager = new ShapeManager(height, width);
 	}
 	
-//	public EventHandler<? super MouseEvent> registerCheckHitOnShape(){
-//		return (e)-> {
-//			int x = new Double(e.getX()).intValue();
-//			int y = new Double(e.getY()).intValue();
-//			super.getScene().getRoot().setCursor(Cursor.DEFAULT);
-////			System.out.printf("I am still here!\n");
-////			System.out.printf("%d %d\n", x, y);
-//			for(int i = 0; i < 5; i++){
-//				int tempX = x - i;
-//				int tempY = y - i;
-//				for(; tempX <= x + i; tempX++){
-//					for(; tempY <= y + i; tempY++){
-//						if((tempX<width)&&(tempX>=0)&&(tempY<height)&&(tempY>=0)){
-//							ModelShape shape = shapeManager.getDot2modelShape()[tempY][tempX];
-//							if(shape!=null){
-//								System.out.printf("shape is not null\n");
-//								super.getScene().getRoot().setCursor(Cursor.HAND);
-//								isChanged = true;
-//								new CircleEditor().editShape(this, shape);
-//								return;
-//							}
-//						}
-//					}
-//				}
-//			}
-//			if(isChanged)
-//				this.refreshScreen(shapeManager.refresh());
-//		};
-//	}
-	
 	public EventHandler<? super MouseEvent> registerCheckPosition(){
 		return new EventHandler<MouseEvent>() {
 		      @Override public void handle(MouseEvent event) {
