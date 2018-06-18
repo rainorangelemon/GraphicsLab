@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 
 public class test extends Application{
 
-    private static final double MODEL_SCALE_FACTOR = 3;
     private static final double MODEL_X_OFFSET = 0; // standard
     private static final double MODEL_Y_OFFSET = -200; // standard
     private static final int VIEWPORT_SIZE = 400;

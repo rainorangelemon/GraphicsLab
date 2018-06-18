@@ -145,7 +145,6 @@ public class SmoothingGroups {
     private static boolean isNormalsEqual(Vec3f n1, Vec3f n2) {
         if (n1.x == 1.0e20f || n1.y == 1.0e20f || n1.z == 1.0e20f
                 || n2.x == 1.0e20f || n2.y == 1.0e20f || n2.z == 1.0e20f) {
-            //System.out.println("unlocked normal found, skipping");
             return false;
         }
         Vec3f myN1 = new Vec3f(n1);

@@ -41,8 +41,6 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -95,33 +93,12 @@ public class MtlReader {
                 } else if (line.startsWith("map_Kd ")) {
                     material.setDiffuseColor(Color.WHITE);
                     material.setDiffuseMap(loadImage(line.substring("map_Kd ".length())));
-//                    material.setSelfIlluminationMap(loadImage(line.substring("map_Kd ".length())));
-//                    material.setSpecularColor(Color.WHITE);
                     modified = true;
-                    //            } else if (line.startsWith("illum ")) {
-                    //                int illumNo = Integer.parseInt(line.substring("illum ".length()));
-                    /*
-                        0    Color on and Ambient off
-                        1    Color on and Ambient on
-                        2    Highlight on
-                        3    Reflection on and Ray trace on
-                        4    Transparency: Glass on
-                             Reflection: Ray trace on
-                        5    Reflection: Fresnel on and Ray trace on
-                        6    Transparency: Refraction on
-                             Reflection: Fresnel off and Ray trace on
-                        7    Transparency: Refraction on
-                             Reflection: Fresnel on and Ray trace on
-                        8    Reflection on and Ray trace off
-                        9    Transparency: Glass on
-                             Reflection: Ray trace off
-                        10   Casts shadows onto invisible surfaces
-                     */
                 } else {
                     // do not understand this line.
                 }
             } catch (Exception ex) {
-                Logger.getLogger(MtlReader.class.getName()).log(Level.SEVERE, "Failed to parse line:" + line, ex);
+                ex.printStackTrace();
             }
         }
         addMaterial(name);
