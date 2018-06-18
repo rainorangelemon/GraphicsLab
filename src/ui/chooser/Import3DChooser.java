@@ -1,8 +1,11 @@
 package ui.chooser;
 
 import java.io.File;
+import java.io.IOException;
 
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
@@ -19,7 +22,11 @@ public class Import3DChooser extends ShapeChooser{
 		if(import3D!=null){
 			this.import3D = import3D;
 		}else{
-			this.import3D = new ModelImport3D(width, height, null);
+				try {
+					this.import3D = new ModelImport3D(width, height, null);
+				} catch (IOException e) {
+					// do nothing
+				}
 		}
 	}
 	
@@ -28,15 +35,31 @@ public class Import3DChooser extends ShapeChooser{
 		FileChooser fileChooser = new FileChooser();
         
         //Set extension filter
-        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("OBJ files (*.obj)", "*.OBJ");
-        fileChooser.getExtensionFilters().addAll(extFilterJPG);
+        FileChooser.ExtensionFilter extFilterOBJ = new FileChooser.ExtensionFilter("OBJ files (*.obj)", "*.OBJ");
+        fileChooser.getExtensionFilters().addAll(extFilterOBJ);
 
         File file = fileChooser.showOpenDialog(null);
         if(file!=null)
-        	import3D.setFile(file);
+			try {
+				import3D.setFile(file);
+			} catch (IOException e) {
+				try {
+					import3D.setFile(null);
+				} catch (IOException e1) {
+					// do nothing
+				}
+				makeFormatError();
+			}
         //Show open file dialog
         saver.call(import3D);
-        
 		return null;
+	}
+	
+	private void makeFormatError(){
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Format Error");
+		alert.setHeaderText("The format of the obj file is wrong");
+		alert.setContentText("Please check and change the texts in the file before import it!");
+		alert.showAndWait();
 	}
 }

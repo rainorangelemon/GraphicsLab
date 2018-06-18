@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -15,6 +16,7 @@ import model.ModelShape;
 import model.ModelStep;
 import model.ShapeManager;
 import model.operation.ModelOperation;
+import ui.chooser.Import3DChooser;
 import ui.chooser.ImportChooser;
 import ui.chooser.ShapeChooser;
 //import ui.editor.CircleEditor;
@@ -22,6 +24,7 @@ import ui.chooser.ShapeChooser;
 import ui.operator.Operator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.scene.AmbientLight;
 //import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -32,14 +35,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.MeshView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Pair;
 
 public class SketchPad extends Pane{
 	private int height, width;
 	private Dot[][] dotMatrix;
 	private ShapeManager shapeManager;
+	private List<MeshView> current3D = new ArrayList<MeshView>();
 //	private boolean isChanged = false;
 	Label reporter = new Label("");
 	static String OUTSIDE_TEXT = "Outside SketchPad";
@@ -52,7 +58,12 @@ public class SketchPad extends Pane{
 		this.setMaxSize(width, height);
 		this.height = height;
 		this.width = width;
+		this.setMinSize(width, height);
+		this.setMaxSize(width, height);
 		initAllDots();
+		AmbientLight pointLight = new AmbientLight(Color.WHITE);
+		pointLight.setOpacity(1);
+		this.getChildren().add(pointLight);
 		shapeManager = new ShapeManager(height, width);
 	}
 	
@@ -85,12 +96,16 @@ public class SketchPad extends Pane{
 	}
 	
 	public void addNewShape(ModelShape newShape){
+		this.getChildren().removeAll(current3D);
 		List<ModelDot> modelDots = shapeManager.addNewStepShape(newShape);
 		for(ModelDot newDot: modelDots){
 			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 				dotMatrix[newDot.getY()][newDot.getX()].changeColor(newDot.getColor());
+			}else if(newDot.getMeshView()!=null){
+				this.current3D.add(newDot.getMeshView());
 			}
 		}
+		this.getChildren().addAll(current3D);
 		refreshStepEditor();
 	}
 	
@@ -101,23 +116,25 @@ public class SketchPad extends Pane{
 	}
 	
 	public void redo(){
-		ModelDot[][] modelDots = shapeManager.redo();
-		refreshScreen(modelDots);
+		refreshScreen(shapeManager.redo());
 		refreshStepEditor();
 	}
 	
 	public void undo(){
-		ModelDot[][] modelDots = shapeManager.undo();
-		refreshScreen(modelDots);
+		refreshScreen(shapeManager.undo());
 		refreshStepEditor();
 	}
 
-	public void refreshScreen(ModelDot[][] modelDots) {
+	public void refreshScreen(Pair<List<MeshView>, ModelDot[][]> modelShapes) {
+		this.getChildren().removeAll(current3D);
+		ModelDot[][] modelDots = modelShapes.getValue();
 		for(ModelDot[] dotRow: modelDots){
 			for(ModelDot dot: dotRow){
 				dotMatrix[dot.getY()][dot.getX()].changeColor(dot.getColor());
 			}
 		}
+		current3D = modelShapes.getKey();
+		this.getChildren().addAll(current3D);
 	}
 
 	public void refreshStepEditor(){
@@ -229,6 +246,17 @@ public class SketchPad extends Pane{
 	
 	public void importPic(){
 		ShapeChooser shapeChooser = new ImportChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
+			@Override
+			public Integer call(ModelShape param) {
+				addNewShape(param);
+				return null;
+			}
+		});
+		shapeChooser.showEditor();
+	}
+	
+	public void import3D(){
+		ShapeChooser shapeChooser = new Import3DChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
 			@Override
 			public Integer call(ModelShape param) {
 				addNewShape(param);

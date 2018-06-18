@@ -469,4 +469,36 @@ public class ObjImporter {
 			return normalSize;
 		}
     }
+
+	
+    public ArrayList<Double> getVertices() {
+		return vertices;
+	}
+
+	
+    public void setVertices(ArrayList<Double> vertices) {
+		this.vertices = vertices;
+	}
+
+	
+    public ArrayList<Double> getUvs() {
+		return uvs;
+	}
+
+	
+    public void setUvs(ArrayList<Double> uvs) {
+		this.uvs = uvs;
+	}
+
+	
+    public ArrayList<Double> getNormals() {
+		return normals;
+	}
+
+	
+    public void setNormals(ArrayList<Double> normals) {
+		this.normals = normals;
+	}
+
+    
 }

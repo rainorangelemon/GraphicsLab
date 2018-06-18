@@ -87,6 +87,7 @@ public class ShapeManager {
 			}
 		}
 		current3D.clear();
+		
 		for(int step=0; step<currentIndex; step++){
 			if(steps.get(step) instanceof ModelShape){
 				ModelShape shape = (ModelShape) steps.get(step);
@@ -104,6 +105,8 @@ public class ShapeManager {
 				for(ModelDot newDot: newDots){
 					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 						dots[newDot.getY()][newDot.getX()].color = newDot.color;
+					}else if(newDot.getMeshView()!=null){
+						current3D.add(newDot.getMeshView());
 					}
 				}
 			}else if(steps.get(step) instanceof OperationClip){
@@ -125,7 +128,6 @@ public class ShapeManager {
 				for(ModelDot newDot: newDots){
 					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
 						dots[newDot.getY()][newDot.getX()].color = newDot.color;
-//						dot2modelShape[newDot.getY()][newDot.getX()] = steps.get(step);
 					}
 				}
 			}

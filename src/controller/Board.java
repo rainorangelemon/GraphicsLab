@@ -87,10 +87,17 @@ public class Board {
 			 newStage = UIComponentFactory.renderStage(newStage);
 			 new StartMenu(newStage);
 		 });
-		 MenuItem importMenuItem = new MenuItem("Import");
-		 importMenuItem.setOnAction(e -> {
+		 
+		 MenuItem import2DMenuItem = new MenuItem("Import PNG/JPG");
+		 import2DMenuItem.setOnAction(e -> {
 			 paper.importPic();
 		 });
+		 
+		 MenuItem import3DMenuItem = new MenuItem("Import OBJ");
+		 import3DMenuItem.setOnAction(e -> {
+			 paper.import3D();
+		 });
+		 
 		 MenuItem exportMenuItem = new MenuItem("Export");
 		 exportMenuItem.setOnAction(e -> {
 			 paper.captureAndSaveDisplay();
@@ -99,7 +106,7 @@ public class Board {
 		 exitMenuItem.setOnAction(e -> mainStage.close());
 
 		 fileMenu.getItems().addAll(newMenuItem,
-		        new SeparatorMenuItem(), importMenuItem, exportMenuItem, new SeparatorMenuItem(), exitMenuItem);
+		        new SeparatorMenuItem(), import2DMenuItem, import3DMenuItem, exportMenuItem, new SeparatorMenuItem(), exitMenuItem);
 		 
 		 Menu shapeMenu = addShapeOptions(height, width);
 		 
