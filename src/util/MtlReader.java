@@ -150,7 +150,7 @@ public class MtlReader {
     private Image loadImage(String filename) {
         filename = baseUrl + filename;
         log("Loading image from " + filename);
-        return new Image(filename);
+        return new Image(new File(filename).toURI().toString());
     }
 
     public Map<String, Material> getMaterials() {

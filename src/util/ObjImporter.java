@@ -82,7 +82,7 @@ public class ObjImporter {
     }
 
     private static boolean debug = false;
-    private static double scale = 100;
+    private static double scale = 1;
 
     static void log(String string) {
         if (debug) {
