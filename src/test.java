@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 
 public class test extends Application{
 
-    private static final double MODEL_SCALE_FACTOR = 40;
+    private static final double MODEL_SCALE_FACTOR = 3;
     private static final double MODEL_X_OFFSET = 0; // standard
     private static final double MODEL_Y_OFFSET = -200; // standard
     private static final int VIEWPORT_SIZE = 400;
@@ -29,9 +29,9 @@ public class test extends Application{
 		Group grp = new Group();
 //		File initialFile = new File();
 //	    InputStream targetStream = new FileInputStream(initialFile);
-        ObjImporter.setScale(MODEL_SCALE_FACTOR);
         // Scooter-normals.obj
 		ObjImporter objImporter = new ObjImporter("src/resources/Luka/Luka.obj");
+		objImporter.updateMeshes();
 		for(String key: objImporter.getMeshes()){
 			MeshView newMesh = objImporter.buildMeshView(key);
 			MeshView meshView = newMesh;

@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 
 import javax.imageio.ImageIO;
 
-import model.operation.OperationClip;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
 import model.operation.OperationTranslation;
@@ -97,9 +96,6 @@ public class ModelImport3D extends ModelShape{
 
 	@Override
 	public ModelShape clip(int windowX0, int windowY0, int windowX1, int windowY1) {
-		List<ModelDot> dots = this.drawPics();
-		List<ModelDot> newDots = OperationClip.dotsClip(windowX0, windowY0, windowX1, windowY1, dots);
-		ModelDots result = new ModelDots(newDots);
-		return result;
+		return this;
 	}
 }
