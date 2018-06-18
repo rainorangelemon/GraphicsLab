@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import view.UIComponentFactory;
-import model.ModelBrevier;
+import model.ModelBezier;
 import model.ModelShape;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -17,21 +17,21 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
-public class BrevierChooser extends ShapeChooser{
+public class BezierChooser extends ShapeChooser{
 
-	private ModelBrevier brevier; 
+	private ModelBezier bezier; 
 	private Callback<ModelShape, Integer> saver;
 	private int width, height;
 	private BorderPane root;
 	
-	public BrevierChooser(int width, int height, Color color, ModelBrevier brevier, Callback<ModelShape, Integer> saver){
+	public BezierChooser(int width, int height, Color color, ModelBezier bezier, Callback<ModelShape, Integer> saver){
 		this.saver = saver;
 		this.height = height;
 		this.width = width;
-		if(brevier!=null){
-			this.brevier = brevier;
+		if(bezier!=null){
+			this.bezier = bezier;
 		}else{
-			this.brevier = new ModelBrevier(new ArrayList<Pair<Integer, Integer>>(), width, height, color);
+			this.bezier = new ModelBezier(new ArrayList<Pair<Integer, Integer>>(), width, height, color);
 		}
 	}
 	
@@ -46,29 +46,29 @@ public class BrevierChooser extends ShapeChooser{
 		buttons.getChildren().addAll(addButton, deleteButton);
 		
 		addButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(brevier.getInterpolationDots());
+			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(bezier.getInterpolationDots());
 			if(interPoints.size()>0){
 				Pair<Integer, Integer> last = interPoints.get(interPoints.size()-1);
 				interPoints.add(new Pair<Integer, Integer>(new Integer(last.getKey()), new Integer(last.getValue())));
 			}else{
 				interPoints.add(new Pair<Integer, Integer>(new Integer(0), new Integer(0)));
 			}
-			brevier.setInterpolationDots(interPoints);
+			bezier.setInterpolationDots(interPoints);
 			makePointList(points);
 		});
 		
 		deleteButton.setOnMouseClicked(e->{
-			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(brevier.getInterpolationDots());
+			ArrayList<Pair<Integer, Integer>> interPoints = new ArrayList<Pair<Integer, Integer>>(bezier.getInterpolationDots());
 			if(interPoints.size()>0){
 				interPoints.remove(interPoints.size()-1);
 				interPoints.trimToSize();
 			}
-			brevier.setInterpolationDots(interPoints);
+			bezier.setInterpolationDots(interPoints);
 			makePointList(points);
 		});
 		
 		Button button = new Button("Confirm");
-		button.setOnMouseClicked(e->{saver.call(brevier);});
+		button.setOnMouseClicked(e->{saver.call(bezier);});
 		
 		
 		makePointList(points);
@@ -77,10 +77,10 @@ public class BrevierChooser extends ShapeChooser{
 		root.setLeft(positionModifier);
 		
 		Label targetColor = new Label("which color you want to paint?");
-		ColorPicker targetColorPicker = super.getColorPicker(brevier.getColor(), new Callback<Color, Integer>(){
+		ColorPicker targetColorPicker = super.getColorPicker(bezier.getColor(), new Callback<Color, Integer>(){
 			@Override
 			public Integer call(Color param) {
-				brevier.setColor(param);
+				bezier.setColor(param);
 				return null;
 			}
 		});
@@ -94,7 +94,7 @@ public class BrevierChooser extends ShapeChooser{
 	
 	private void makePointList(VBox result){
 		result.getChildren().clear();
-		List<Pair<Integer, Integer>> interPoints = brevier.getInterpolationDots();
+		List<Pair<Integer, Integer>> interPoints = bezier.getInterpolationDots();
 		int index = 0;
 		for(Pair<Integer, Integer> pair: interPoints){
 			final int index2 = index;

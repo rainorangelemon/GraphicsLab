@@ -46,14 +46,14 @@ public class ModelDots extends ModelShape{
 	public ModelShape rotation(int rotationX, int rotationY,
 			int rotationDegree) {
 		ModelDots result = new ModelDots(this);
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, result.dots);
+		result.setDots(OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, true, 0.3, result.dots));
 		return result;
 	}
 
 	@Override
 	public ModelShape scaling(int scalePointX, int scalePointY, double scaleSizeX, double scaleSizeY) {
 		ModelDots result = new ModelDots(this);
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, result.dots);
+		result.setDots(OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, true, 0.3, result.dots));
 		return result;
 	}
 

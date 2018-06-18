@@ -119,6 +119,7 @@ public class ModelCircle extends ModelShape{
 	    return result;
 	}
 	
+	// bresenham in circle
 	private List<ModelDot> drawBresenhamCircle(){
 		Color color = super.getColor();
 		int r = a;
@@ -247,13 +248,8 @@ public class ModelCircle extends ModelShape{
 			ModelCircle newCircle = new ModelCircle(this);
 			return newCircle;
 		}else{
-			List<ModelDot> result = new ArrayList<ModelDot>();
-			List<ModelDot> originDots = this.getModelDots(null);
-			for(ModelDot dot: originDots){
-				result.addAll(OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 0.3, dot));
-			}
-			ModelDots newDots = new ModelDots(result);
-			return newDots;
+			ArrayList<ModelDot> originDots = new ArrayList<ModelDot>(this.getModelDots(null));
+			return new ModelDots(OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, true, 0.3, originDots));
 		}
 	}
 

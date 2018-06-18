@@ -63,14 +63,24 @@ public class OperationRotation extends ModelOperation{
 		return result;
 	}
 	
-	public static void dotsRotation(int rotationX, int rotationY, int rotationDegree, ArrayList<ModelDot> dots) {
+	public static ArrayList<ModelDot> dotsRotation(int rotationX, int rotationY, int rotationDegree, boolean newList, double grain, ArrayList<ModelDot> dots) {
 		int size = dots.size();
+		ArrayList<ModelDot> result = new ArrayList<ModelDot>();
 		for(int i=0; i<size; i++){
 			ModelDot oldDot = dots.get(i);
-			List<ModelDot> newDot = dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
-			dots.remove(i);
-			dots.trimToSize();
-			dots.add(i, newDot.get(0));
+			List<ModelDot> newDot = dotRotation(rotationX, rotationY, rotationDegree, grain, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
+			if(!newList){
+				dots.remove(i);
+				dots.trimToSize();
+				dots.add(i, newDot.get(0));
+			}else{
+				result.addAll(newDot);
+			}
+		}
+		if(!newList){
+			return dots;
+		}else{
+			return result;
 		}
 	}
 

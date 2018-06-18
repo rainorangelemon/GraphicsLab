@@ -28,7 +28,7 @@ public class FillChooser extends ShapeChooser{
 		if(fill!=null){
 			this.fill = fill;
 		}else{
-			this.fill = new ModelFill(true, 0, 0, width, height, -1, -1, color, false, color);
+			this.fill = new ModelFill(true, 0, 0, color, false, color);
 		}
 	}
 	

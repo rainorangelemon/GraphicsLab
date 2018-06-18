@@ -12,6 +12,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import model.ModelLine;
+import model.ModelPolygon;
 import model.ModelShape;
 import model.ShapeManager;
 import model.operation.ModelOperation;
@@ -51,7 +53,7 @@ public class ClipOperator extends Operator{
 		VBox shapeChooser = new VBox();
 		MenuButton box = new MenuButton("shapes to clip");
 		for(int i=0; (i<manager.getSteps().size())&&(i<clip.getCurrentIndex()); i++){
-			if(manager.getSteps().get(i) instanceof ModelShape){
+			if((manager.getSteps().get(i) instanceof ModelLine)||(manager.getSteps().get(i) instanceof ModelPolygon)){
 		        int index = i;
 				CheckBox cb1 = new CheckBox(new Integer(i).toString()+ ": " + manager.getSteps().get(i).getClass().getSimpleName().substring(5));  
 		        CustomMenuItem item1 = new CustomMenuItem(cb1);  

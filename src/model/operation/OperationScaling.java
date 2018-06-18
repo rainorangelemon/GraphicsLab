@@ -36,16 +36,24 @@ public class OperationScaling extends ModelOperation{
 		return result;
 	}
 	
-	public static void dotsScaling(int scalePointX, int scalePointY,
-			double scaleSizeX, double scaleSizeY, 
-			ArrayList<ModelDot> dots) {
+	public static ArrayList<ModelDot> dotsScaling(int scalePointX, int scalePointY, double scaleSizeX, double scaleSizeY, boolean newList, double sampleStep, ArrayList<ModelDot> dots) {
 		int size = dots.size();
+		ArrayList<ModelDot> result = new ArrayList<ModelDot>();
 		for(int i=0; i<size; i++){
 			ModelDot oldDot = dots.get(i);
 			List<ModelDot> newDot = dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
-			dots.remove(i);
-			dots.trimToSize();
-			dots.add(i, newDot.get(0));
+			if(!newList){
+				dots.remove(i);
+				dots.trimToSize();
+				dots.add(i, newDot.get(0));
+			}else{
+				result.addAll(newDot);
+			}
+		}
+		if(!newList){
+			return dots;
+		}else{
+			return result;
 		}
 	}
 

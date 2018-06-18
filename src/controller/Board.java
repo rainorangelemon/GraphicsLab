@@ -36,7 +36,7 @@ public class Board {
 		this.put("Circle/Oval", "Circle");
 		this.put("Polygon", "Polygon");
 		this.put("Fill", "Fill");
-		this.put("Brevier", "Brevier");
+		this.put("Bezier", "Bezier");
 	}};
 	
 	@SuppressWarnings("serial")

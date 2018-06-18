@@ -82,7 +82,7 @@ public class ModelImport extends ModelShape{
 	@Override
 	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelDots result = new ModelDots(this.drawPics());
-		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, result.getDots());
+		result.setDots(OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, true, 0.3, result.getDots()));
 		return result;
 	}
 
@@ -90,7 +90,7 @@ public class ModelImport extends ModelShape{
 	public ModelShape scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
 		ModelDots result = new ModelDots(this.drawPics());
-		OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, result.getDots());
+		result.setDots(OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, true, 0.3, result.getDots()));
 		return result;
 	}
 
