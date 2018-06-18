@@ -76,7 +76,7 @@ public class ScalingOperator extends Operator{
 					return null;
 				}
 				}, 
-				"pivot point' y");
+				"scale x");
 			HBox scale_y = UIComponentFactory.doubleSlider(scaling.getScaleSizeY(), 0.5, 1.5, new Callback<Double, Integer>(){
 				@Override
 				public Integer call(Double param) {
@@ -84,7 +84,7 @@ public class ScalingOperator extends Operator{
 					return null;
 				}
 				}, 
-				"pivot point' y");
+				"scale y");
 			positionModifier.getChildren().addAll(position, start_x, start_y, scale, scale_x, scale_y);
 		}
 		Button button = new Button("Confirm");

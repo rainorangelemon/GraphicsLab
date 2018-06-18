@@ -20,7 +20,7 @@ public class ModelDot {
 		this.y = -1;
 		this.meshView = meshView;
 	}
-	
+
 	public void setPos(int x, int y){
 		this.x=x;
 		this.y=y;

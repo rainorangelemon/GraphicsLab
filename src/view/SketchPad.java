@@ -110,6 +110,7 @@ public class SketchPad extends Pane{
 	}
 	
 	public void addNewOperation(ModelOperation newOperation){
+		this.getChildren().removeAll(current3D);
 		shapeManager.addNewStepOperation(newOperation);
 		refreshStepEditor();
 		refreshScreen(shapeManager.refresh());
@@ -133,7 +134,7 @@ public class SketchPad extends Pane{
 				dotMatrix[dot.getY()][dot.getX()].changeColor(dot.getColor());
 			}
 		}
-		current3D = modelShapes.getKey();
+		current3D = new ArrayList<MeshView>(modelShapes.getKey());
 		this.getChildren().addAll(current3D);
 	}
 
