@@ -9,20 +9,17 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import model.operation.OperationClip;
-import model.operation.OperationRotation;
-import model.operation.OperationScaling;
-import model.operation.OperationTranslation;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 
-public class ModelImport extends ModelShape{
+public class ModelImport2D extends ModelShape{
 	private File file;
 	private int width, height;
 	
-	public ModelImport(int width, int height, File file) {
+	public ModelImport2D(int width, int height, File file) {
 		super(Color.WHITE);
 		this.width = width;
 		this.height = height;
@@ -75,23 +72,20 @@ public class ModelImport extends ModelShape{
 	@Override
 	public ModelShape translation(int offsetX, int offsetY) {
 		ModelDots result = new ModelDots(this.drawPics());
-		OperationTranslation.dotsTranslation(offsetX, offsetY, result.getDots());
-		return result;
+		return result.translation(offsetX, offsetY);
 	}
 
 	@Override
 	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
 		ModelDots result = new ModelDots(this.drawPics());
-		result.setDots(OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, true, 0.3, result.getDots()));
-		return result;
+		return result.rotation(rotationX, rotationY, rotationDegree);
 	}
 
 	@Override
 	public ModelShape scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
 		ModelDots result = new ModelDots(this.drawPics());
-		result.setDots(OperationScaling.dotsScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, true, 0.3, result.getDots()));
-		return result;
+		return result.scaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY);
 	}
 
 	@Override

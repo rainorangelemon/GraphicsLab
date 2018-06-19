@@ -3,7 +3,7 @@ package ui.chooser;
 import java.util.ArrayList;
 import java.util.List;
 
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 import model.ModelBezier;
 import model.ModelShape;
 import javafx.scene.Node;

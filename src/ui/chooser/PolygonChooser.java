@@ -17,7 +17,7 @@ import javafx.util.Callback;
 import javafx.util.Pair;
 import model.ModelPolygon;
 import model.ModelShape;
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 
 public class PolygonChooser extends ShapeChooser{
 	private Callback<ModelShape, Integer> saver;

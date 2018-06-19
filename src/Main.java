@@ -1,6 +1,6 @@
 
 import controller.StartMenu;
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

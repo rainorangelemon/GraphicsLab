@@ -12,7 +12,7 @@ import javafx.util.Callback;
 import model.ShapeManager;
 import model.operation.ModelOperation;
 import model.operation.OperationTranslation;
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 
 public class TranslationOperator extends Operator{
 	

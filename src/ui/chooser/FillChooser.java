@@ -2,7 +2,7 @@ package ui.chooser;
 
 import model.ModelFill;
 import model.ModelShape;
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Button;

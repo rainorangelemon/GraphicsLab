@@ -121,7 +121,7 @@ public class ModelImport3D extends ModelShape{
 		for(int i=0; i<vertices.size(); i=i+3){
 			newVertices.add(vertices.get(i) * scaleSizeX);
 			newVertices.add(vertices.get(i+1) * scaleSizeY);
-			newVertices.add(vertices.get(i+2) * ((scaleSizeX+scaleSizeY)/2));
+			newVertices.add(vertices.get(i+2));
 		}
 		try {
 			return new ModelImport3D(0, 0, file, newVertices, newNormals, newUvs);

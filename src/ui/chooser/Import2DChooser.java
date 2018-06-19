@@ -2,24 +2,24 @@ package ui.chooser;
 
 import java.io.File;
 
-import model.ModelImport;
+import model.ModelImport2D;
 import model.ModelShape;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
-public class ImportChooser extends ShapeChooser{
+public class Import2DChooser extends ShapeChooser{
 
 	private Callback<ModelShape, Integer> saver;
-	private ModelImport importPic;
+	private ModelImport2D importPic;
 
-	public ImportChooser(int width, int height, Color color, ModelImport importPic, Callback<ModelShape, Integer> saver){
+	public Import2DChooser(int width, int height, Color color, ModelImport2D importPic, Callback<ModelShape, Integer> saver){
 		this.saver = saver;
 		if(importPic!=null){
 			this.importPic = importPic;
 		}else{
-			this.importPic = new ModelImport(width, height, null);
+			this.importPic = new ModelImport2D(width, height, null);
 		}
 	}
 	

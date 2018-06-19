@@ -17,7 +17,7 @@ import model.ModelStep;
 import model.ShapeManager;
 import model.operation.ModelOperation;
 import ui.chooser.Import3DChooser;
-import ui.chooser.ImportChooser;
+import ui.chooser.Import2DChooser;
 import ui.chooser.ShapeChooser;
 //import ui.editor.CircleEditor;
 //import ui.editor.LineEditor;
@@ -246,7 +246,7 @@ public class SketchPad extends Pane{
 	}
 	
 	public void importPic(){
-		ShapeChooser shapeChooser = new ImportChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
+		ShapeChooser shapeChooser = new Import2DChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
 			@Override
 			public Integer call(ModelShape param) {
 				addNewShape(param);

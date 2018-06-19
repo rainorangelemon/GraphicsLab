@@ -1,4 +1,4 @@
-package view;
+package util;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;

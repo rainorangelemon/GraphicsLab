@@ -18,7 +18,7 @@ import model.ModelShape;
 import model.ShapeManager;
 import model.operation.ModelOperation;
 import model.operation.OperationClip;
-import view.UIComponentFactory;
+import util.UIComponentFactory;
 
 public class ClipOperator extends Operator{
 	
