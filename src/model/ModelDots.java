@@ -38,7 +38,7 @@ public class ModelDots extends ModelShape{
 	@Override
 	public ModelShape translation(int offsetX, int offsetY) {
 		ModelDots result = new ModelDots(this);
-		OperationTranslation.dotsTranslation(offsetX, offsetY, result.dots);
+		result.setDots(OperationTranslation.dotsTranslation(offsetX, offsetY, true, result.dots));
 		return result;
 	}
 

@@ -25,8 +25,11 @@ import ui.operator.Operator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.AmbientLight;
+import javafx.scene.PerspectiveCamera;
 //import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.SceneAntialiasing;
+import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -46,7 +49,6 @@ public class SketchPad extends Pane{
 	private Dot[][] dotMatrix;
 	private ShapeManager shapeManager;
 	private List<MeshView> current3D = new ArrayList<MeshView>();
-//	private boolean isChanged = false;
 	Label reporter = new Label("");
 	static String OUTSIDE_TEXT = "Outside SketchPad";
 	private VBox stepEditor = new VBox();
@@ -72,7 +74,7 @@ public class SketchPad extends Pane{
 		      @Override public void handle(MouseEvent event) {
 		    	if((new Double(event.getY()).intValue()< getDotMatrix().length)&&(new Double(event.getX()).intValue()< getDotMatrix()[0].length)){
 			        String msg =
-			          "(x: "       + event.getX()      + ", y: "       + event.getY()       + ") -- " +
+			          "(x: "       + new Double(event.getX()).intValue()      + ", y: "       + new Double(event.getY()).intValue()       + ") -- " +
 			          "(width: "  + getWidth() + ", height: "  + getHeight()  + ") -- " +
 			          "Color: " + getDotMatrix()[new Double(event.getY()).intValue()][new Double(event.getX()).intValue()].getColorString();
 			        reporter.setText(msg);
@@ -278,6 +280,13 @@ public class SketchPad extends Pane{
 
 	public ShapeManager getShapeManager() {
 		return shapeManager;
+	}
+	
+	public SubScene createScene3D() {
+	    SubScene scene3d = new SubScene(this, width, height, true, SceneAntialiasing.BALANCED);
+	    scene3d.setFill(Color.WHITE);
+	    scene3d.setCamera(new PerspectiveCamera());
+	    return scene3d;
 	}
 	
 }

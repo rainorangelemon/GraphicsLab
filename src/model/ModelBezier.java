@@ -74,7 +74,7 @@ public class ModelBezier extends ModelShape{
 	public ModelBezier translation(int offsetX, int offsetY) {
 		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
-		OperationTranslation.dotsTranslation(offsetX, offsetY, pivots);
+		OperationTranslation.dotsTranslation(offsetX, offsetY, false, pivots);
 		result.setInterpolationDots(ModelShape.dots2pairs(pivots));
 		return result;
 	}

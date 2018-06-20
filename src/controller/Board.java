@@ -69,7 +69,7 @@ public class Board {
 		preview.setFitToHeight(true);
 		preview.setFitToWidth(true);
 		paper = new SketchPad(height, width);
-		preview.setContent(paper);
+		preview.setContent(paper.createScene3D());
 		preview.setPannable(true);
 		preview.setPrefSize(width, height);
 		BorderPane.setAlignment(preview,Pos.CENTER);

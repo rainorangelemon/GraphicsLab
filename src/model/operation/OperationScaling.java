@@ -44,13 +44,13 @@ public class OperationScaling extends ModelOperation{
 			List<ModelDot> newDot = dotScaling(scalePointX, scalePointY, scaleSizeX, scaleSizeY, 1.0, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
 			if(!newList){
 				dots.remove(i);
-				dots.trimToSize();
 				dots.add(i, newDot.get(0));
 			}else{
 				result.addAll(newDot);
 			}
 		}
 		if(!newList){
+			dots.trimToSize();
 			return dots;
 		}else{
 			return result;

@@ -23,14 +23,24 @@ public class OperationTranslation extends ModelOperation{
 		return new ModelDot(dot.getX()+offsetX, dot.getY()+offsetY, dot.getColor());
 	}
 	
-	public static void dotsTranslation(int offsetX, int offsetY, ArrayList<ModelDot> dots){
+	public static ArrayList<ModelDot> dotsTranslation(int offsetX, int offsetY, boolean newList, ArrayList<ModelDot> dots){
 		int size = dots.size();
+		ArrayList<ModelDot> result = new ArrayList<ModelDot>();
 		for(int i=0; i<size; i++){
 			ModelDot oldDot = dots.get(i);
 			ModelDot newDot = dotTranslation(offsetX, offsetY, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
-			dots.remove(i);
+			if(!newList){
+				dots.remove(i);
+				dots.add(i, newDot);
+			}else{
+				result.add(newDot);
+			}
+		}
+		if(!newList){
 			dots.trimToSize();
-			dots.add(i, newDot);
+			return dots;
+		}else{
+			return result;
 		}
 	}
 

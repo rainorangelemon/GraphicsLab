@@ -71,13 +71,13 @@ public class OperationRotation extends ModelOperation{
 			List<ModelDot> newDot = dotRotation(rotationX, rotationY, rotationDegree, grain, new ModelDot(oldDot.getX(), oldDot.getY(), oldDot.getColor()));
 			if(!newList){
 				dots.remove(i);
-				dots.trimToSize();
 				dots.add(i, newDot.get(0));
 			}else{
 				result.addAll(newDot);
 			}
 		}
 		if(!newList){
+			dots.trimToSize();
 			return dots;
 		}else{
 			return result;

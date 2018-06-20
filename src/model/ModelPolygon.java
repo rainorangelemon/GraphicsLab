@@ -80,7 +80,7 @@ public class ModelPolygon extends ModelShape{
 	public ModelPolygon translation(int offsetX, int offsetY) {
 		ModelPolygon result = new ModelPolygon(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
-		OperationTranslation.dotsTranslation(offsetX, offsetY, pivots);
+		OperationTranslation.dotsTranslation(offsetX, offsetY, false, pivots);
 		result.setVertices(ModelShape.dots2pairs(pivots));
 		return result;
 	}
