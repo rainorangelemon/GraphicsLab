@@ -20,7 +20,8 @@ public class StartMenu {
     
 	private Stage mainStage;
 	private VBox root = new VBox();
-	private int height=600, width=600;
+	private static int MIN_SIZE=400, MAX_SIZE=1000, DEFAULT_SIZE=600;
+	int width = DEFAULT_SIZE, height = DEFAULT_SIZE;
 	/**
 	 * Displays the splash screen on stage
 	 * @param stage The stage to display the splash screen
@@ -29,7 +30,7 @@ public class StartMenu {
 	    mainStage=stage;
 		new UIComponentFactory();
 		root.getChildren().add(new Label("Please choose the size of picture:\n\n"));
-		root.getChildren().add(UIComponentFactory.unsignedIntSlider(600, 600, 1000, new Callback<Integer, Integer>(){
+		root.getChildren().add(UIComponentFactory.unsignedIntSlider(DEFAULT_SIZE, MIN_SIZE, MAX_SIZE, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				height = param;
@@ -37,7 +38,7 @@ public class StartMenu {
 			}
 			}, 
 			"height"));
-		root.getChildren().add(UIComponentFactory.unsignedIntSlider(600, 600, 1000, new Callback<Integer, Integer>(){
+		root.getChildren().add(UIComponentFactory.unsignedIntSlider(DEFAULT_SIZE, MIN_SIZE, MAX_SIZE, new Callback<Integer, Integer>(){
 			@Override
 			public Integer call(Integer param) {
 				width = param;

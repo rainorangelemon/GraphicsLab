@@ -28,7 +28,16 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * 
+ * 
+ * 
  * Modifier: Chenning Yu
+ *
+ *
+ *
+ *
+ *
  */
 package util;
 
@@ -469,36 +478,28 @@ public class ObjImporter {
 			return normalSize;
 		}
     }
-
 	
     public ArrayList<Double> getVertices() {
 		return vertices;
 	}
-
 	
     public void setVertices(ArrayList<Double> vertices) {
 		this.vertices = vertices;
 	}
-
 	
     public ArrayList<Double> getUvs() {
 		return uvs;
 	}
-
 	
     public void setUvs(ArrayList<Double> uvs) {
 		this.uvs = uvs;
 	}
-
 	
     public ArrayList<Double> getNormals() {
 		return normals;
 	}
-
 	
     public void setNormals(ArrayList<Double> normals) {
 		this.normals = normals;
 	}
-
-    
 }
