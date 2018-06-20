@@ -33,10 +33,12 @@ public class Import2DChooser extends ShapeChooser{
         fileChooser.getExtensionFilters().addAll(extFilterJPG, extFilterPNG);
 
         File file = fileChooser.showOpenDialog(null);
-        if(file!=null)
+        if(file!=null){
         	importPic.setFile(file);
-        //Show open file dialog
-        saver.call(importPic);
+        	saver.call(importPic);
+        }else{
+        	saver.call(null);
+        }
         
 		return null;
 	}

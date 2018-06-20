@@ -42,7 +42,7 @@ public class ModelBezier extends ModelShape{
 
 	// Bezier Algorithm
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		if(interpolationDots.size()==0){
 			return result;

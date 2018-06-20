@@ -39,7 +39,7 @@ public class Import3DChooser extends ShapeChooser{
         fileChooser.getExtensionFilters().addAll(extFilterOBJ);
 
         File file = fileChooser.showOpenDialog(null);
-        if(file!=null)
+        if(file!=null){
 			try {
 				import3D.setFile(file);
 			} catch (IOException e) {
@@ -50,8 +50,11 @@ public class Import3DChooser extends ShapeChooser{
 				}
 				makeFormatError();
 			}
-        //Show open file dialog
-        saver.call(import3D);
+	        //Show open file dialog
+	        saver.call(import3D);
+        }else{
+        	saver.call(null);
+        }
 		return null;
 	}
 	

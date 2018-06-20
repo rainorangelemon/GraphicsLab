@@ -89,7 +89,7 @@ public class UIComponentFactory {
         slider.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,
                 Number old_val, Number new_val) {
-                    saver.call(new_val.doubleValue());
+                    saver.call((double)Math.round(new_val.doubleValue()*10)/10.0);
             }
         });
 		result.getChildren().addAll(slider, levelLabel);

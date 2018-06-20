@@ -88,12 +88,12 @@ public class Board {
 			 new StartMenu(newStage);
 		 });
 		 
-		 MenuItem import2DMenuItem = new MenuItem("Import PNG/JPG");
+		 MenuItem import2DMenuItem = new MenuItem("Import 2D: PNG/JPG");
 		 import2DMenuItem.setOnAction(e -> {
 			 paper.importPic();
 		 });
 		 
-		 MenuItem import3DMenuItem = new MenuItem("Import OBJ");
+		 MenuItem import3DMenuItem = new MenuItem("Import 3D: OBJ");
 		 import3DMenuItem.setOnAction(e -> {
 			 paper.import3D();
 		 });
@@ -106,7 +106,8 @@ public class Board {
 		 exitMenuItem.setOnAction(e -> mainStage.close());
 
 		 fileMenu.getItems().addAll(newMenuItem,
-		        new SeparatorMenuItem(), import2DMenuItem, import3DMenuItem, exportMenuItem, new SeparatorMenuItem(), exitMenuItem);
+		        new SeparatorMenuItem(), import2DMenuItem, import3DMenuItem, 
+		        new SeparatorMenuItem(), exportMenuItem, new SeparatorMenuItem(), exitMenuItem);
 		 
 		 Menu shapeMenu = addShapeOptions(height, width);
 		 

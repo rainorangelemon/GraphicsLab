@@ -17,8 +17,7 @@ public class Dot extends Circle{
 		return new Dot(modelDot.getX(), modelDot.getY(), modelDot.getColor());
 	}
 	
-	public String getColorString(){
-		Color color =  (Color) super.getFill();
+	public static String getColorString(Color color){
 		return String.format( "%02X%02X%02X",
 	            (int)( color.getRed() * 255 ),
 	            (int)( color.getGreen() * 255 ),

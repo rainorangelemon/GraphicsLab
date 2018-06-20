@@ -13,7 +13,7 @@ import javafx.util.Pair;
 public class ShapeManager {
 	private Vector<ModelStep> steps = new Vector<ModelStep>();
 	private int currentIndex;
-	private ModelDot[][] dots;
+	private Color[][] dots;
 	private List<MeshView> current3D = new ArrayList<MeshView>();
 	private int height, width;
 //	private ModelShape[][] dot2modelShape;
@@ -24,11 +24,11 @@ public class ShapeManager {
 		this.width = width;
 		currentIndex = 0;
 //		dot2modelShape = new ModelShape[height][width];
-		dots = new ModelDot[height][width];
+		dots = new Color[height][width];
 		for(int y=0;y<height;y++){
 			for(int x=0;x<width;x++){
 //				dot2modelShape[y][x] = null;
-				dots[y][x] = new ModelDot(x, y, Color.WHITE);
+				dots[y][x] = Color.WHITE;
 			}
 		}
 	}
@@ -46,7 +46,7 @@ public class ShapeManager {
 		List<ModelDot> newDots = newShape.getModelDots(dots);
 		for(ModelDot newDot: newDots){
 			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
-				dots[newDot.getY()][newDot.getX()].color = newDot.color;
+				dots[newDot.getY()][newDot.getX()] = newDot.color;
 			}else if(newDot.getMeshView()!=null){
 				current3D.add(newDot.getMeshView());
 			}
@@ -69,20 +69,20 @@ public class ShapeManager {
 		currentIndex = steps.size();
 	}
 	
-	public Pair<List<MeshView>, ModelDot[][]> undo(){
+	public Pair<List<MeshView>, Color[][]> undo(){
 		currentIndex = (currentIndex>0)?(currentIndex-1):currentIndex;
 		return getModelDots();
 	}
 	
-	public Pair<List<MeshView>, ModelDot[][]> redo(){
+	public Pair<List<MeshView>, Color[][]> redo(){
 		currentIndex = (currentIndex<(steps.size()))?(currentIndex+1):currentIndex;
 		return getModelDots();
 	}
 	
-	private Pair<List<MeshView>, ModelDot[][]> getModelDots(){
+	private Pair<List<MeshView>, Color[][]> getModelDots(){
 		for(int y=0;y<height;y++){
 			for(int x=0;x<width;x++){
-				dots[y][x].color=Color.WHITE;
+				dots[y][x] = Color.WHITE;
 //				dot2modelShape[y][x] = null;
 			}
 		}
@@ -104,7 +104,7 @@ public class ShapeManager {
 				List<ModelDot> newDots = shape.getModelDots(dots);
 				for(ModelDot newDot: newDots){
 					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
-						dots[newDot.getY()][newDot.getX()].color = newDot.color;
+						dots[newDot.getY()][newDot.getX()] = newDot.color;
 					}else if(newDot.getMeshView()!=null){
 						current3D.add(newDot.getMeshView());
 					}
@@ -121,18 +121,18 @@ public class ShapeManager {
 				for(int y=0;y<height;y++){
 					for(int x=0;x<width;x++){
 						if((y<clip.getWindowY0())||(y>clip.getWindowY1())||(x<clip.getWindowX0())||(x>clip.getWindowX1())){
-							dots[y][x].color = Color.WHITE;
+							dots[y][x] = Color.WHITE;
 						}
 					}
 				}
 				for(ModelDot newDot: newDots){
 					if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
-						dots[newDot.getY()][newDot.getX()].color = newDot.color;
+						dots[newDot.getY()][newDot.getX()] = newDot.color;
 					}
 				}
 			}
 		}
-		return new Pair<List<MeshView>, ModelDot[][]>(current3D, dots);
+		return new Pair<List<MeshView>, Color[][]>(current3D, dots);
 	}
 	
 	public Vector<ModelStep> getSteps(){
@@ -143,7 +143,7 @@ public class ShapeManager {
 		return currentIndex;
 	}
 	
-	public Pair<List<MeshView>, ModelDot[][]> refresh(){
+	public Pair<List<MeshView>, Color[][]> refresh(){
 		return getModelDots();
 	}
 	

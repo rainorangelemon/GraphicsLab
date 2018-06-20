@@ -28,6 +28,10 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
+ * Modifier: Chenning Yu
+ *
  */
 package util;
 
@@ -53,8 +57,9 @@ public class MtlReader {
     private String baseUrl;
 
     public MtlReader(String filename, String parentUrl) {
-        baseUrl = parentUrl.substring(0,parentUrl.lastIndexOf('/')+1);
-        String fileUrl = baseUrl + filename;
+        baseUrl = parentUrl;
+        String fileUrl = baseUrl + File.separator + filename;
+        System.out.printf("%s %s", baseUrl, filename);
         try {
     		File initialFile = new File(fileUrl);
     	    InputStream targetStream = new FileInputStream(initialFile);
@@ -68,7 +73,7 @@ public class MtlReader {
 
     private Map<String, Material> materials = new HashMap<>();
     private PhongMaterial material = new PhongMaterial();
-    private boolean modified = false;
+    private boolean changed = false;
 
     private void read(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
@@ -81,21 +86,23 @@ public class MtlReader {
                 } else if (line.startsWith("newmtl ")) {
                     addMaterial(name);
                     name = line.substring("newmtl ".length());
-                } else if (line.startsWith("Kd ")) {
-                    material.setDiffuseColor(readColor(line.substring(3)));
-                    modified = true;
-                } else if (line.startsWith("Ks ")) {
-                    material.setSpecularColor(readColor(line.substring(3)));
-                    modified = true;
-                } else if (line.startsWith("Ns ")) {
-                    material.setSpecularPower(Double.parseDouble(line.substring(3)));
-                    modified = true;
-                } else if (line.startsWith("map_Kd ")) {
-                    material.setDiffuseColor(Color.WHITE);
-                    material.setDiffuseMap(loadImage(line.substring("map_Kd ".length())));
-                    modified = true;
                 } else {
-                    // do not understand this line.
+                	boolean currentChanged = changed;
+                	changed = true;
+                	if (line.startsWith("Ns ")) {
+                        material.setSpecularPower(Double.parseDouble(line.substring(3)));
+                    } else if (line.startsWith("Kd ")) {
+                        material.setDiffuseColor(readColor(line.substring(3)));
+                    } else if (line.startsWith("Ks ")) {
+                        material.setSpecularColor(readColor(line.substring(3)));
+                    } else if (line.startsWith("map_Kd ")) {
+                        material.setDiffuseColor(Color.WHITE);
+                        material.setDiffuseMap(loadImage(line.substring("map_Kd ".length())));
+                    } else {
+                        // do not understand this line.
+                    	// 尽管 illum 行有明确的含义，但javafx尚不支持对于材质的透明度的调整，因此采用无视illum行的解决方法
+                    	changed = currentChanged;
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -105,7 +112,7 @@ public class MtlReader {
     }
 
     private void addMaterial(String name) {
-        if (modified) {
+        if (changed) {
             if (!materials.containsKey(name)) {
                 materials.put(name, material);
             } else {
@@ -124,7 +131,7 @@ public class MtlReader {
     }
 
     private Image loadImage(String filename) {
-        filename = baseUrl + filename;
+        filename = baseUrl + File.separator + filename;
         return new Image(new File(filename).toURI().toString());
     }
 

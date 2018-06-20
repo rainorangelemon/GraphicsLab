@@ -63,7 +63,7 @@ public class ModelPolygon extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		if(checkConvex(vertices)&&(vertices.size()>=2)){
 			for(int i=0; i<vertices.size(); i++){

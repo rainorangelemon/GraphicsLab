@@ -26,7 +26,7 @@ public class ModelCircle extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		List<ModelDot> originDots = new ArrayList<ModelDot>();
 		if(a==b){

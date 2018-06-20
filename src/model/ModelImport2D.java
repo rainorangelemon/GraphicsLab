@@ -27,7 +27,7 @@ public class ModelImport2D extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		result.addAll(drawPics());
 		return result;

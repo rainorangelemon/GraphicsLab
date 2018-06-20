@@ -78,6 +78,7 @@ public class RotationOperator extends Operator{
 				}, 
 				"degree");
 			positionModifier.getChildren().addAll(position, start_x, start_y, degree, start_degree);
+			positionModifier.setPrefWidth(300);
 		}
 		Button button = new Button("Confirm");
 		button.setOnMouseClicked(e->{

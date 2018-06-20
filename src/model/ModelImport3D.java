@@ -29,7 +29,7 @@ public class ModelImport3D extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		result.addAll(draw3D());
 		return result;
@@ -52,7 +52,7 @@ public class ModelImport3D extends ModelShape{
     	if(objImporter!=null){
 			objImporter.updateMeshes();
 			for(String key: objImporter.getMeshes()){
-				MeshView meshView = objImporter.buildMeshView(key);
+				MeshView meshView = objImporter.createMeshView(key);
 				meshView.setDrawMode(DrawMode.FILL);
 				result.add(new ModelDot(meshView));
 			}
@@ -119,8 +119,12 @@ public class ModelImport3D extends ModelShape{
 				newUvs = new ArrayList<Double>(uvs), 
 				newNormals = new ArrayList<Double>(normals);
 		for(int i=0; i<vertices.size(); i=i+3){
-			newVertices.add(vertices.get(i) * scaleSizeX);
-			newVertices.add(vertices.get(i+1) * scaleSizeY);
+			Double x = vertices.get(i);
+			Double y = vertices.get(i+1);
+			double x1 = x * scaleSizeX + (double)scalePointX * (1-scaleSizeX);
+			double y1 = y * scaleSizeY + (double)scalePointY * (1-scaleSizeY);
+			newVertices.add(x1);
+			newVertices.add(y1);
 			newVertices.add(vertices.get(i+2));
 		}
 		try {

@@ -1,4 +1,5 @@
 /*
+ * 此函数由 Chenning Yu 在原代码基础上进行重构与更改，虽尚未完全理解代码内容，但光滑算法并非实验要求，也算是底层API的一种。
  * Copyright (c) 2010, 2015, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *

@@ -88,14 +88,14 @@ public class ModelFill extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		boolean[][] visit = new boolean[dots.length][dots[0].length];
 		List<ModelDot> paintDots = new ArrayList<ModelDot>();
 		Stack<ModelDot> waitingStack = new Stack<ModelDot>();
 		if(((dots[0].length>seedX)&&(seedX>=0))&&((dots.length>seedY)&&(seedY>=0))){
-			waitingStack.push(dots[seedY][seedY]);
+			waitingStack.push(new ModelDot(seedX, seedY, dots[seedY][seedX]));
 			if(isInteriorPointMethod){
-				definedColor = dots[seedY][seedX].getColor();
+				definedColor = dots[seedY][seedX];
 			}
 		}
 		while(!waitingStack.empty()){
@@ -112,7 +112,7 @@ public class ModelFill extends ModelShape{
 		return result;
 	}
 	
-	List<ModelDot> getNeighbours(ModelDot[][] dots, ModelDot seedDot, boolean[][] visit){
+	List<ModelDot> getNeighbours(Color[][] dots, ModelDot seedDot, boolean[][] visit){
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		List<ModelDot> candidates = new ArrayList<ModelDot>();
 		List<Pair<Integer, Integer>> neighbourOffSet;
@@ -124,7 +124,9 @@ public class ModelFill extends ModelShape{
 		for(Pair<Integer, Integer> offset: neighbourOffSet){
 			if(((seedDot.getX() + offset.getKey())<dots[0].length)&&(seedDot.getX() + offset.getKey()>=0)
 					&&((seedDot.getY() + offset.getValue())<dots.length)&&(seedDot.getY() + offset.getValue()>=0)){
-				candidates.add(dots[seedDot.getY() + offset.getValue()][seedDot.getX() + offset.getKey()]);
+				int x = seedDot.getX() + offset.getKey();
+				int y = seedDot.getY() + offset.getValue();
+				candidates.add(new ModelDot(x, y, dots[y][x]));
 			}
 		}
 		for(ModelDot candidate: candidates){

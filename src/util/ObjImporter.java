@@ -1,4 +1,6 @@
 /*
+ * 此函数由 Chenning Yu 在原代码基础上进行重构与更改，已完全理解原代码所含内容。
+ * 
  * Copyright (c) 2010, 2014, Oracle and/or its affiliates.
  * All rights reserved. Use is subject to license terms.
  *
@@ -62,9 +64,10 @@ import javafx.scene.shape.CullFace;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
-/** Obj file reader */
+/* Obj file reader */
 public class ObjImporter {
 
+	// Obj file 中可能含有序号为负的顶点索引，转化为非负索引
     private int verticeIndex(int verticeIndex) {
         if (verticeIndex <= 0) {
             return verticeIndex + (vertices.size() / 3) - 1;
@@ -73,6 +76,7 @@ public class ObjImporter {
         }
     }
 
+    // Obj file 中可能含有序号为负的纹理顶点索引，转化为非负索引
     private int uvIndex(int uvIndex) {
         if (uvIndex <= 0) {
             return uvIndex + (uvs.size() / 2) - 1;
@@ -81,6 +85,7 @@ public class ObjImporter {
         }
     }
 
+    // Obj file 中可能含有序号为负的法线索引，转化为非负索引
     private int normalIndex(int normalIndex) {
         if (normalIndex <= 0) {
             return normalIndex + (normals.size() / 3) - 1;
@@ -100,21 +105,13 @@ public class ObjImporter {
     private Map<String, TriangleMesh> meshes = new HashMap<>();
     private Map<String, Material> materials = new HashMap<>();
     private List<Map<String, Material>> materialLibrary = new ArrayList<>();
-    private String objFileUrl;
+    private String directoryUrl;
 
     public ObjImporter(String objFileUrl) throws FileNotFoundException, IOException {
-        this.objFileUrl = objFileUrl;
 		File initialFile = new File(objFileUrl);
+		this.directoryUrl = initialFile.getParent();
 	    InputStream targetStream = new FileInputStream(initialFile);
-        read(targetStream);
-    }
-
-    public TriangleMesh getMesh() {
-        return meshes.values().iterator().next();
-    }
-
-    public Material getMaterial() {
-        return materials.values().iterator().next();
+        readObjFile(targetStream);
     }
 
     public TriangleMesh getMesh(String key) {
@@ -125,7 +122,8 @@ public class ObjImporter {
         return materials.get(key);
     }
 
-    public MeshView buildMeshView(String key) {
+    // 根据meshes中数据创建MeshView
+    public MeshView createMeshView(String key) {
         MeshView meshView = new MeshView();
         meshView.setId(key);
         meshView.setMaterial(materials.get(key));
@@ -146,7 +144,7 @@ public class ObjImporter {
     private static String DEFAULT_FACE = "defaultFace";
     private int smoothingGroupsStart = 0;
 
-    private void read(InputStream inputStream) throws IOException {
+    private void readObjFile(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         int currentSmoothGroup = 0;
@@ -154,15 +152,15 @@ public class ObjImporter {
         while ((line = br.readLine()) != null) {
             try {
                 if (line.startsWith("mtllib ")) {
-                    // setting materials lib
+                    // 设置materialLib
                     String[] split = line.substring("mtllib ".length()).trim().split(" +");
                     for (String filename : split) {
-                        MtlReader mtlReader = new MtlReader(filename, this.objFileUrl);
+                        MtlReader mtlReader = new MtlReader(filename, this.directoryUrl);
                         materialLibrary.add(mtlReader.getMaterials());
                     }
                 } else if (line.startsWith("usemtl ")) {
                     addMesh(key);
-                    // setting new material for next mesh
+                    // 设置之后mesh的材质
                     String materialName = line.substring("usemtl ".length());
                     for (Map<String, Material> mm : materialLibrary) {
                         Material m = mm.get(materialName);
@@ -172,8 +170,9 @@ public class ObjImporter {
                         }
                     }
                 } else if (line.isEmpty() || line.startsWith("#")) {
-                    // comments and empty lines are ignored
-                } else if (line.startsWith("v ")) {			// vertices
+                    // 无视空行与注释
+                } else if (line.startsWith("v ")) {
+                	// 顶点
                     String[] split = line.substring(2).trim().split(" +");
                     double x = Double.parseDouble(split[0]);
                     double y = Double.parseDouble(split[1]);
@@ -183,14 +182,16 @@ public class ObjImporter {
                     vertices.add(y);
                     vertices.add(z);
                     
-                } else if (line.startsWith("vt ")) {		// material vertices
+                } else if (line.startsWith("vt ")) {		
+                	// 材质顶点
                     String[] split = line.substring(3).trim().split(" +");
                     double u = Double.parseDouble(split[0]);
                     double v = Double.parseDouble(split[1]);
                     
                     uvs.add(u);
                     uvs.add(1 - v);
-                } else if (line.startsWith("vn ")) {		// normal vertices
+                } else if (line.startsWith("vn ")) {		
+                	// 顶点处法线向量
                     String[] split = line.substring(2).trim().split(" +");
                     double x = Double.parseDouble(split[0]);
                     double y = Double.parseDouble(split[1]);
@@ -199,6 +200,7 @@ public class ObjImporter {
                     normals.add(y);
                     normals.add(z);
                 } else if (line.startsWith("f ")) {
+                	// 创建面
                     String[] split = line.substring(2).trim().split(" +");
                     int[][] points = new int[split.length][];
                     boolean uvGiven = true;
@@ -271,17 +273,19 @@ public class ObjImporter {
                         smoothingGroups.add(currentSmoothGroup);
                     }
                 } else if (line.startsWith("g ") || line.equals("g")) {
+                	// 命名实体
                     addMesh(key);
                     key = line.length() > 2 ? line.substring(2) : DEFAULT_FACE;
                 
                 } else if (line.startsWith("s ")) {
+                	// 平滑化
                     if (line.substring(2).equals("off")) {
                         currentSmoothGroup = 0;
                     } else {
                         currentSmoothGroup = Integer.parseInt(line.substring(2));
                     }
                 } else {
-                	// ignore the line and do nothing
+                	// 未知行，什么都不做
                 }
             } catch (Exception ex) {
             	ex.printStackTrace();
@@ -292,14 +296,13 @@ public class ObjImporter {
 
     private Map<String, MeshStart> key2meshStart = new HashMap<>();
     
-    public void addMesh(String key) {
-    	// TODO: copy this to other places
+    private void addMesh(String key) {
+    	// 若faceStart大于当前faces的大小，则没有必要创建网格
     	if (facesStart >= faces.size()) {
-            // we're only interested in faces
             smoothingGroupsStart = smoothingGroups.size();
             return;
         }
-        // TODO: value the meshStart
+        // 给 meshStart 赋值
     	MeshStart meshStart = new MeshStart(facesStart, facesNormalStart, smoothingGroupsStart, 
     			faces.size(), faceNormals.size(), smoothingGroups.size(),
     			vertices.size(), uvs.size(), normals.size());
@@ -321,6 +324,7 @@ public class ObjImporter {
         smoothingGroupsStart = smoothingGroups.size();
     }
 
+    // 此函数用于顶点位置被修改后重新计算网格
     public void updateMeshes(){
         meshes.clear();
     	for(String key: key2meshStart.keySet()){
@@ -329,6 +333,7 @@ public class ObjImporter {
         }
     }
     
+    // 创建三角网格组成的网格
 	private TriangleMesh updateTriangleMesh(MeshStart meshStart, boolean update) {
 		Map<Integer, Integer> verticeMap = new HashMap<>();
         Map<Integer, Integer> uvMap = new HashMap<>();
@@ -388,13 +393,13 @@ public class ObjImporter {
             }
         }
 
-        // create the mesh
+        // 创建网格
         TriangleMesh mesh = new TriangleMesh();
         mesh.getPoints().setAll(arrayList2DoubleArray(currentVertices));
         mesh.getTexCoords().setAll(arrayList2DoubleArray(currentUVs));
         mesh.getFaces().setAll(arrayList2IntArray(faces.subList(meshStart.getFacesStart(), meshStart.getFacesSize())));
 
-        // Use normals if they are provided
+        // 使用法向量
         int[] smGroups;
         if (useNormals) {
             int[] newFaces = arrayList2IntArray(faces.subList(meshStart.getFacesStart(), meshStart.getFacesSize()));

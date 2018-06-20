@@ -19,20 +19,19 @@ import model.operation.ModelOperation;
 import ui.chooser.Import3DChooser;
 import ui.chooser.Import2DChooser;
 import ui.chooser.ShapeChooser;
-//import ui.editor.CircleEditor;
-//import ui.editor.LineEditor;
 import ui.operator.Operator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.AmbientLight;
 import javafx.scene.PerspectiveCamera;
-//import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -46,7 +45,8 @@ import javafx.util.Pair;
 
 public class SketchPad extends Pane{
 	private int height, width;
-	private Dot[][] dotMatrix;
+	private Color[][] dotMatrix;
+	private PixelWriter pixelWriter;
 	private ShapeManager shapeManager;
 	private List<MeshView> current3D = new ArrayList<MeshView>();
 	Label reporter = new Label("");
@@ -67,33 +67,41 @@ public class SketchPad extends Pane{
 		pointLight.setOpacity(1);
 		this.getChildren().add(pointLight);
 		shapeManager = new ShapeManager(height, width);
+		refreshStepEditor();
 	}
 	
 	public EventHandler<? super MouseEvent> registerCheckPosition(){
 		return new EventHandler<MouseEvent>() {
-		      @Override public void handle(MouseEvent event) {
-		    	if((new Double(event.getY()).intValue()< getDotMatrix().length)&&(new Double(event.getX()).intValue()< getDotMatrix()[0].length)){
-			        String msg =
-			          "(x: "       + new Double(event.getX()).intValue()      + ", y: "       + new Double(event.getY()).intValue()       + ") -- " +
-			          "(width: "  + getWidth() + ", height: "  + getHeight()  + ") -- " +
-			          "Color: " + getDotMatrix()[new Double(event.getY()).intValue()][new Double(event.getX()).intValue()].getColorString();
-			        reporter.setText(msg);
-		    	}
+		      @Override 
+		      public void handle(MouseEvent event) {
+		    	    int eventX = new Double(event.getX()).intValue();
+			    	int eventY = new Double(event.getY()).intValue();
+			    	if((eventY < height)&&(eventX< width)){
+				        String msg =
+				          "(x: "       + eventX      + ", y: "       + eventY       + ") -- " +
+				          "(width: "  + getWidth() + ", height: "  + getHeight()  + ") -- " +
+				          "Color: " + Dot.getColorString(getDotMatrix()[eventY][eventX]);
+				        reporter.setText(msg);
+			    	}
 		      }
 		    };
 	}
 	
 	private void initAllDots() {
-		dotMatrix = new Dot[height][width];
+		dotMatrix = new Color[height][width];
 		for(int i=0;i<height;i++){
 			for(int j=0;j<width;j++){
-				dotMatrix[i][j]=new Dot(j, i, Color.WHITE);
-				this.getChildren().add(dotMatrix[i][j]);
+				dotMatrix[i][j]=Color.WHITE;
 			}
 		}
+		Canvas canvas = new Canvas();
+		canvas.setWidth(width);
+		canvas.setHeight(height);
+		this.pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
+		this.getChildren().add(canvas);
 	}
 	
-	public Dot[][] getDotMatrix(){
+	public Color[][] getDotMatrix(){
 		return dotMatrix;
 	}
 	
@@ -101,8 +109,12 @@ public class SketchPad extends Pane{
 		this.getChildren().removeAll(current3D);
 		List<ModelDot> modelDots = shapeManager.addNewStepShape(newShape);
 		for(ModelDot newDot: modelDots){
-			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
-				dotMatrix[newDot.getY()][newDot.getX()].changeColor(newDot.getColor());
+			int x = newDot.getX();
+			int y = newDot.getY();
+			Color color = newDot.getColor();
+			if((y>=0)&&(y<height)&&(x>=0)&&(x<width)){
+				dotMatrix[y][x] = color;
+				pixelWriter.setColor(x, y, color);
 			}else if(newDot.getMeshView()!=null){
 				this.current3D.add(newDot.getMeshView());
 			}
@@ -128,12 +140,14 @@ public class SketchPad extends Pane{
 		refreshStepEditor();
 	}
 
-	public void refreshScreen(Pair<List<MeshView>, ModelDot[][]> modelShapes) {
+	public void refreshScreen(Pair<List<MeshView>, Color[][]> modelShapes) {
 		this.getChildren().removeAll(current3D);
-		ModelDot[][] modelDots = modelShapes.getValue();
-		for(ModelDot[] dotRow: modelDots){
-			for(ModelDot dot: dotRow){
-				dotMatrix[dot.getY()][dot.getX()].changeColor(dot.getColor());
+		Color[][] modelDots = modelShapes.getValue();
+		for(int y = 0; y<height; y++){
+			for(int x=0;x<width;x++){
+				Color color = modelDots[y][x];
+				dotMatrix[y][x] = color;
+				pixelWriter.setColor(x, y, color);
 			}
 		}
 		current3D = new ArrayList<MeshView>(modelShapes.getKey());
@@ -142,7 +156,13 @@ public class SketchPad extends Pane{
 
 	public void refreshStepEditor(){
 		stepEditor.getChildren().clear();
-		Label currentIndex = new Label("current index: " + new Integer(shapeManager.getCurrentIndex()-1).toString());
+		String index = "";
+		if((shapeManager.getCurrentIndex()-1)>=0){
+			index = "current index: " + new Integer(shapeManager.getCurrentIndex()-1).toString();
+		}else{
+			index = "  no shapes";
+		}
+		Label currentIndex = new Label(index);
 		stepEditor.getChildren().add(currentIndex);
 		Vector<ModelStep> steps = shapeManager.getSteps();
 		for(int i=0;i<shapeManager.getCurrentIndex();i++){
@@ -251,7 +271,9 @@ public class SketchPad extends Pane{
 		ShapeChooser shapeChooser = new Import2DChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
 			@Override
 			public Integer call(ModelShape param) {
-				addNewShape(param);
+				if(param!=null){
+					addNewShape(param);
+				}
 				return null;
 			}
 		});
@@ -262,7 +284,9 @@ public class SketchPad extends Pane{
 		ShapeChooser shapeChooser = new Import3DChooser(width, height, Color.WHITE, null, new Callback<ModelShape, Integer>(){
 			@Override
 			public Integer call(ModelShape param) {
-				addNewShape(param);
+				if(param!=null){
+					addNewShape(param);
+				}
 				return null;
 			}
 		});

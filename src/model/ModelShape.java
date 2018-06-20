@@ -17,7 +17,7 @@ public abstract class ModelShape extends ModelStep{
 		this.color = source.color;
 	}
 	
-	protected abstract List<ModelDot> getModelDots(ModelDot[][] dots);
+	protected abstract List<ModelDot> getModelDots(Color[][] dots);
 	
 	public abstract ModelShape translation(int offsetX, int offsetY);
 	

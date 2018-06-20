@@ -27,7 +27,7 @@ public class ModelDots extends ModelShape{
 	}
 
 	@Override
-	protected List<ModelDot> getModelDots(ModelDot[][] dots) {
+	protected List<ModelDot> getModelDots(Color[][] dots) {
 		List<ModelDot> result = new ArrayList<ModelDot>();
 		for(ModelDot dot : this.dots){
 			result.add(new ModelDot(dot.getX(), dot.getY(), dot.getColor()));
