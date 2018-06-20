@@ -68,6 +68,7 @@ public class SketchPad extends Pane{
 		this.getChildren().add(pointLight);
 		shapeManager = new ShapeManager(height, width);
 		refreshStepEditor();
+		dotMatrix = shapeManager.getDots();
 	}
 	
 	public EventHandler<? super MouseEvent> registerCheckPosition(){
@@ -80,7 +81,7 @@ public class SketchPad extends Pane{
 				        String msg =
 				          "(x: "       + eventX      + ", y: "       + eventY       + ") -- " +
 				          "(width: "  + getWidth() + ", height: "  + getHeight()  + ") -- " +
-				          "Color: " + Dot.getColorString(getDotMatrix()[eventY][eventX]);
+				          "Color: " + Dot.getColorString(dotMatrix[eventY][eventX]);
 				        reporter.setText(msg);
 			    	}
 		      }
@@ -88,21 +89,11 @@ public class SketchPad extends Pane{
 	}
 	
 	private void initAllDots() {
-		dotMatrix = new Color[height][width];
-		for(int i=0;i<height;i++){
-			for(int j=0;j<width;j++){
-				dotMatrix[i][j]=Color.WHITE;
-			}
-		}
 		Canvas canvas = new Canvas();
 		canvas.setWidth(width);
 		canvas.setHeight(height);
 		this.pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
 		this.getChildren().add(canvas);
-	}
-	
-	public Color[][] getDotMatrix(){
-		return dotMatrix;
 	}
 	
 	public void addNewShape(ModelShape newShape){
@@ -113,7 +104,6 @@ public class SketchPad extends Pane{
 			int y = newDot.getY();
 			Color color = newDot.getColor();
 			if((y>=0)&&(y<height)&&(x>=0)&&(x<width)){
-				dotMatrix[y][x] = color;
 				pixelWriter.setColor(x, y, color);
 			}else if(newDot.getMeshView()!=null){
 				this.current3D.add(newDot.getMeshView());
@@ -146,7 +136,6 @@ public class SketchPad extends Pane{
 		for(int y = 0; y<height; y++){
 			for(int x=0;x<width;x++){
 				Color color = modelDots[y][x];
-				dotMatrix[y][x] = color;
 				pixelWriter.setColor(x, y, color);
 			}
 		}

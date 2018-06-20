@@ -146,5 +146,9 @@ public class ShapeManager {
 	public Pair<List<MeshView>, Color[][]> refresh(){
 		return getModelDots();
 	}
+
+	public Color[][] getDots() {
+		return dots;
+	}
 	
 }
