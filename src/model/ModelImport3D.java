@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
@@ -61,7 +62,7 @@ public class ModelImport3D extends ModelShape{
 	}
 
 	@Override
-	public ModelShape translation(int offsetX, int offsetY) {
+	public ModelShape translation(int offsetX, int offsetY, int offsetZ) {
 		ArrayList<Double> vertices = new ArrayList<Double>(objImporter.getVertices());
 		ArrayList<Double> normals = new ArrayList<Double>(objImporter.getNormals());
 		ArrayList<Double> uvs = new ArrayList<Double>(objImporter.getUvs());
@@ -71,7 +72,7 @@ public class ModelImport3D extends ModelShape{
 		for(int i=0; i<vertices.size(); i=i+3){
 			newVertices.add(vertices.get(i)+offsetX);
 			newVertices.add(vertices.get(i+1)+offsetY);
-			newVertices.add(vertices.get(i+2));
+			newVertices.add(vertices.get(i+2)+offsetZ);
 		}
 //		for(int i=0; i<uvs.size(); i=i+2){
 //			newUvs.add(uvs.get(i)+offsetX);
@@ -85,7 +86,7 @@ public class ModelImport3D extends ModelShape{
 	}
 
 	@Override
-	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		ArrayList<Double> vertices = new ArrayList<Double>(objImporter.getVertices());
 		ArrayList<Double> normals = new ArrayList<Double>(objImporter.getNormals());
 		ArrayList<Double> uvs = new ArrayList<Double>(objImporter.getUvs());
@@ -94,13 +95,34 @@ public class ModelImport3D extends ModelShape{
 				newNormals = new ArrayList<Double>(normals);
 		double theta = ((double)rotationDegree)*Math.PI/180.0;
 		for(int i=0; i<vertices.size(); i=i+3){
-			double vectorX = vertices.get(i) - (double)rotationX;
-			double vectorY = vertices.get(i+1) - (double)rotationY;
+			double x, y;
+			if(axis.equals(Axis.AxisZ)){
+				x = vertices.get(i);
+				y = vertices.get(i+1);
+			}else if(axis.equals(Axis.AxisX)){
+				x = vertices.get(i+1);
+				y = vertices.get(i+2);
+			}else{
+				x = vertices.get(i+2);
+				y = vertices.get(i);
+			}
+			double vectorX = x - (double)rotationX;
+			double vectorY = y - (double)rotationY;
 			double x1 = (double)rotationX + vectorX * Math.cos(theta) - vectorY * Math.sin(theta);
 			double y1 = (double)rotationY + vectorX * Math.sin(theta) + vectorY * Math.cos(theta);
-			newVertices.add(x1);
-			newVertices.add(y1);
-			newVertices.add(vertices.get(i+2));
+			if(axis.equals(Axis.AxisZ)){
+				newVertices.add(x1);
+				newVertices.add(y1);
+				newVertices.add(vertices.get(i+2));
+			}else if(axis.equals(Axis.AxisX)){
+				newVertices.add(vertices.get(i));
+				newVertices.add(x1);
+				newVertices.add(y1);
+			}else{
+				newVertices.add(y1);
+				newVertices.add(vertices.get(i+1));
+				newVertices.add(x1);
+			}
 		}
 		try {
 			return new ModelImport3D(0, 0, file, newVertices, newNormals, newUvs);

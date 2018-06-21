@@ -5,6 +5,7 @@ import java.util.List;
 
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 
 public class ModelLine extends ModelShape{
@@ -84,7 +85,7 @@ public class ModelLine extends ModelShape{
 	}
 
 	@Override
-	public ModelLine translation(int offsetX, int offsetY) {
+	public ModelLine translation(int offsetX, int offsetY, int offsetZ) {
 		int newX0 = x0 + offsetX;
 		int newX1 = x1 + offsetX;
 		int newY0 = y0 + offsetY;
@@ -94,7 +95,7 @@ public class ModelLine extends ModelShape{
 	}
 
 	@Override
-	public ModelLine rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelLine rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		List<ModelDot> newPoint0 = OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x0, y0, super.getColor()));
 		List<ModelDot> newPoint1 = OperationRotation.dotRotation(rotationX, rotationY, rotationDegree, 1.0, new ModelDot(x1, y1, super.getColor())); 
 		int newX0 = newPoint0.get(0).getX();

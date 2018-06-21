@@ -6,6 +6,7 @@ import java.util.List;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
 import model.operation.OperationTranslation;
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -77,7 +78,7 @@ public class ModelPolygon extends ModelShape{
 	}
 
 	@Override
-	public ModelPolygon translation(int offsetX, int offsetY) {
+	public ModelPolygon translation(int offsetX, int offsetY, int offsetZ) {
 		ModelPolygon result = new ModelPolygon(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
 		OperationTranslation.dotsTranslation(offsetX, offsetY, false, pivots);
@@ -86,7 +87,7 @@ public class ModelPolygon extends ModelShape{
 	}
 
 	@Override
-	public ModelPolygon rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelPolygon rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		ModelPolygon result = new ModelPolygon(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getVertices(), super.getColor()));
 		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, false, 1.0, pivots);

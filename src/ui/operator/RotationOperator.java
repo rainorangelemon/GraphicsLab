@@ -10,9 +10,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import model.ModelImport3D;
 import model.ShapeManager;
 import model.operation.ModelOperation;
 import model.operation.OperationRotation;
+import model.operation.OperationRotation.Axis;
 
 public class RotationOperator extends Operator{
 	
@@ -30,7 +32,7 @@ public class RotationOperator extends Operator{
 		if(rotation!=null){
 			this.rotation = rotation;
 		}else{
-			this.rotation = new OperationRotation(manager.getCurrentIndex(), -1, 0, 0, 0);
+			this.rotation = new OperationRotation(manager.getCurrentIndex(), -1, Axis.AxisZ, 0, 0, 0);
 		}
 	}
 	
@@ -48,10 +50,36 @@ public class RotationOperator extends Operator{
 		    	showEditor();
 		    });
 		shapeChooser.getChildren().addAll(start, box);
-		
 		VBox positionModifier = new VBox();
 		if((rotation.getShapeIndex()<manager.getSteps().size())&&(rotation.getShapeIndex()>=0)){
-			Label position = new Label("the pivot point of rotation");
+			if(manager.getSteps().get(rotation.getShapeIndex()) instanceof ModelImport3D){
+				Label axis = new Label("\npivot axis:");
+				ChoiceBox<String> axisBox = new ChoiceBox<String>();
+				axisBox.getItems().addAll(Axis.AxisX.getValue() + ": x-axis",
+						Axis.AxisY.getValue() + ": y-axis",
+						Axis.AxisZ.getValue() + ": z-axis");
+				axisBox.getSelectionModel().select(axisBox.getItems().get(rotation.getAxis().getValue()-1));
+				axisBox.getSelectionModel()
+			    .selectedItemProperty()
+			    .addListener( (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+			    	rotation.setAxis(new Integer(newValue.substring(0, newValue.indexOf(':'))));
+			    	showEditor();
+			    });
+				shapeChooser.getChildren().addAll(axis, axisBox);
+			}
+			Label position = new Label(" pivot point of rotation");
+			String x = "";
+			String y = "";
+			if(rotation.getAxis().equals(Axis.AxisZ)){
+				x = "x of point";
+				y = "y of point";
+			}else if(rotation.getAxis().equals(Axis.AxisX)){
+				x = "y of point";
+				y = "z of point";
+			}else{
+				x = "z of point";
+				y = "x of point";
+			}
 			HBox start_x = UIComponentFactory.unsignedIntSlider(rotation.getRotationX(), 0, width-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
@@ -59,7 +87,7 @@ public class RotationOperator extends Operator{
 					return null;
 				}
 				}, 
-				"x of point");
+				x);
 			HBox start_y = UIComponentFactory.unsignedIntSlider(rotation.getRotationY(), 0, height-1, new Callback<Integer, Integer>(){
 				@Override
 				public Integer call(Integer param) {
@@ -67,7 +95,7 @@ public class RotationOperator extends Operator{
 					return null;
 				}
 				}, 
-				"y of point");
+				y);
 			Label degree = new Label("the degree of rotation");
 			HBox start_degree = UIComponentFactory.unsignedIntSlider(rotation.getRotationDegree(), 0, 359, new Callback<Integer, Integer>(){
 				@Override

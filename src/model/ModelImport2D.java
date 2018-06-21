@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import model.operation.OperationClip;
+import model.operation.OperationRotation.Axis;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -70,15 +71,15 @@ public class ModelImport2D extends ModelShape{
 	}
 
 	@Override
-	public ModelShape translation(int offsetX, int offsetY) {
+	public ModelShape translation(int offsetX, int offsetY, int offsetZ) {
 		ModelDots result = new ModelDots(this.drawPics());
-		return result.translation(offsetX, offsetY);
+		return result.translation(offsetX, offsetY, offsetZ);
 	}
 
 	@Override
-	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		ModelDots result = new ModelDots(this.drawPics());
-		return result.rotation(rotationX, rotationY, rotationDegree);
+		return result.rotation(rotationX, rotationY, axis, rotationDegree);
 	}
 
 	@Override

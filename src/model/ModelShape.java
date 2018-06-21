@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -19,9 +20,9 @@ public abstract class ModelShape extends ModelStep{
 	
 	protected abstract List<ModelDot> getModelDots(Color[][] dots);
 	
-	public abstract ModelShape translation(int offsetX, int offsetY);
+	public abstract ModelShape translation(int offsetX, int offsetY, int offsetZ);
 	
-	public abstract ModelShape rotation(int rotationX, int rotationY, int rotationDegree);
+	public abstract ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree);
 	
 	public abstract ModelShape scaling(int scalePointX, int scalePointY, double scaleSizeX, double scaleSizeY);
 	

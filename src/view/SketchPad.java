@@ -94,6 +94,11 @@ public class SketchPad extends Pane{
 		canvas.setHeight(height);
 		this.pixelWriter = canvas.getGraphicsContext2D().getPixelWriter();
 		this.getChildren().add(canvas);
+		for(int x =0; x<width;x++){
+			for(int y =0; y<height;y++){
+				pixelWriter.setColor(x, y, Color.WHITE);
+			}
+		}
 	}
 	
 	public void addNewShape(ModelShape newShape){

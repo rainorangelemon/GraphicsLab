@@ -7,6 +7,7 @@ import model.operation.OperationClip;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
 import model.operation.OperationTranslation;
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 
 public class ModelDots extends ModelShape{
@@ -36,15 +37,14 @@ public class ModelDots extends ModelShape{
 	}
 
 	@Override
-	public ModelShape translation(int offsetX, int offsetY) {
+	public ModelShape translation(int offsetX, int offsetY, int offsetZ) {
 		ModelDots result = new ModelDots(this);
 		result.setDots(OperationTranslation.dotsTranslation(offsetX, offsetY, true, result.dots));
 		return result;
 	}
 
 	@Override
-	public ModelShape rotation(int rotationX, int rotationY,
-			int rotationDegree) {
+	public ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		ModelDots result = new ModelDots(this);
 		result.setDots(OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, true, 0.3, result.dots));
 		return result;

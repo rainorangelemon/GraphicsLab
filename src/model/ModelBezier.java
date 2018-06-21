@@ -5,6 +5,7 @@ import java.util.List;
 
 import model.operation.OperationClip;
 import model.operation.OperationRotation;
+import model.operation.OperationRotation.Axis;
 import model.operation.OperationScaling;
 import model.operation.OperationTranslation;
 import javafx.scene.paint.Color;
@@ -71,7 +72,7 @@ public class ModelBezier extends ModelShape{
 	}
 
 	@Override
-	public ModelBezier translation(int offsetX, int offsetY) {
+	public ModelBezier translation(int offsetX, int offsetY, int offsetZ) {
 		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
 		OperationTranslation.dotsTranslation(offsetX, offsetY, false, pivots);
@@ -80,7 +81,7 @@ public class ModelBezier extends ModelShape{
 	}
 
 	@Override
-	public ModelBezier rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelBezier rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		ModelBezier result = new ModelBezier(this);
 		ArrayList<ModelDot> pivots = new ArrayList<ModelDot>(ModelShape.pairs2dots(result.getInterpolationDots(), super.getColor()));
 		OperationRotation.dotsRotation(rotationX, rotationY, rotationDegree, false, 1.0, pivots);

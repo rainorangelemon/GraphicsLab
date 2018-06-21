@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
@@ -148,12 +149,12 @@ public class ModelFill extends ModelShape{
 	}
 
 	@Override
-	public ModelFill translation(int offsetX, int offsetY) {
+	public ModelFill translation(int offsetX, int offsetY, int offsetZ) {
 		return this;
 	}
 
 	@Override
-	public ModelFill rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelFill rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		return this;
 	}
 

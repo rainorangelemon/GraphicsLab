@@ -7,16 +7,18 @@ import model.ModelShape;
 
 public class OperationTranslation extends ModelOperation{
 	private int translationX, translationY;
+	private int translationZ;
 	
 	public OperationTranslation(int currentIndex, int shapeIndex, int translationX, int translationY) {
 		super(currentIndex, shapeIndex);
 		this.translationX = translationX;
 		this.translationY = translationY;
+		this.translationZ = 0;
 	}
 
 	@Override
 	public ModelShape operate(ModelShape origin) {
-		return origin.translation(translationX, translationY);
+		return origin.translation(translationX, translationY, translationZ);
 	}
 	
 	public static ModelDot dotTranslation(int offsetX, int offsetY, ModelDot dot){
@@ -58,6 +60,14 @@ public class OperationTranslation extends ModelOperation{
 
 	public void setTranslationY(int translationY) {
 		this.translationY = translationY;
+	}
+
+	public int getTranslationZ() {
+		return translationZ;
+	}
+
+	public void setTranslationZ(int transalationZ) {
+		this.translationZ = transalationZ;
 	}
 	
 }

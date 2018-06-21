@@ -6,6 +6,7 @@ import java.util.List;
 import model.operation.OperationClip;
 import model.operation.OperationRotation;
 import model.operation.OperationScaling;
+import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
 
 public class ModelCircle extends ModelShape{
@@ -234,7 +235,7 @@ public class ModelCircle extends ModelShape{
 	}
 
 	@Override
-	public ModelCircle translation(int offsetX, int offsetY) {
+	public ModelCircle translation(int offsetX, int offsetY, int offsetZ) {
 		int newXc = xc + offsetX;
 		int newYc = yc + offsetY;
 		ModelCircle newCircle = new ModelCircle(this);
@@ -243,7 +244,7 @@ public class ModelCircle extends ModelShape{
 	}
 
 	@Override
-	public ModelShape rotation(int rotationX, int rotationY, int rotationDegree) {
+	public ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
 		if(rotationDegree==0){
 			ModelCircle newCircle = new ModelCircle(this);
 			return newCircle;

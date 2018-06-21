@@ -8,10 +8,28 @@ import model.ModelShape;
 
 public class OperationRotation extends ModelOperation{
 
-	private int rotationX, rotationY, rotationDegree;
+	public enum Axis{
+		AxisX(1),
+		AxisY(2),
+		AxisZ(3);
+		
+		private final int value;
+		
+	    Axis(int value) {
+	        this.value = value;
+	    }
+	    
+	    public int getValue() {
+	        return value;
+	    }
+	}
 	
-	public OperationRotation(int currentIndex, int shapeIndex, int rotationX, int rotationY, int rotationDegree) {
+	private int rotationX, rotationY, rotationDegree;
+	private Axis axis;
+	
+	public OperationRotation(int currentIndex, int shapeIndex, Axis axis, int rotationX, int rotationY, int rotationDegree) {
 		super(currentIndex, shapeIndex);
+		this.axis = axis;
 		this.rotationDegree = rotationDegree;
 		this.rotationX = rotationX;
 		this.rotationY = rotationY;
@@ -19,7 +37,7 @@ public class OperationRotation extends ModelOperation{
 
 	@Override
 	public ModelShape operate(ModelShape origin) {
-		return origin.rotation(rotationX, rotationY, rotationDegree);
+		return origin.rotation(rotationX, rotationY, axis, rotationDegree);
 	}
 
 	public int getRotationX() {
@@ -81,6 +99,18 @@ public class OperationRotation extends ModelOperation{
 			return dots;
 		}else{
 			return result;
+		}
+	}
+
+	public Axis getAxis() {
+		return axis;
+	}
+
+	public void setAxis(int value) {
+		for(Axis axis: Axis.values()){
+			if(axis.getValue()==value){
+				this.axis = axis;
+			}
 		}
 	}
 

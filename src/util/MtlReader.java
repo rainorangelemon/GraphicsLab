@@ -59,7 +59,6 @@ public class MtlReader {
     public MtlReader(String filename, String parentUrl) {
         baseUrl = parentUrl;
         String fileUrl = baseUrl + File.separator + filename;
-        System.out.printf("%s %s", baseUrl, filename);
         try {
     		File initialFile = new File(fileUrl);
     	    InputStream targetStream = new FileInputStream(initialFile);

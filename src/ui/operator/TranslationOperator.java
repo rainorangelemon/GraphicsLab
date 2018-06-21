@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
+import model.ModelImport3D;
 import model.ShapeManager;
 import model.operation.ModelOperation;
 import model.operation.OperationTranslation;
@@ -68,6 +69,17 @@ public class TranslationOperator extends Operator{
 				}, 
 				"offset on y-axis");
 			positionModifier.getChildren().addAll(position, start_x, start_y);
+			if(manager.getSteps().get(translation.getShapeIndex()) instanceof ModelImport3D){
+				HBox start_z = UIComponentFactory.intSlider(translation.getTranslationZ(), -height/2, height/2, new Callback<Integer, Integer>(){
+					@Override
+					public Integer call(Integer param) {
+						translation.setTranslationZ(param);
+						return null;
+					}
+					}, 
+					"offset on z-axis");
+				positionModifier.getChildren().addAll(start_z);
+			}
 			positionModifier.setPrefWidth(300);
 		}
 		Button button = new Button("Confirm");
