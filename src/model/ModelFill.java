@@ -90,7 +90,14 @@ public class ModelFill extends ModelShape{
 
 	@Override
 	protected List<ModelDot> getModelDots(Color[][] dots) {
+		int length1 = dots.length;
+		int length2 = dots[0].length;
 		boolean[][] visit = new boolean[dots.length][dots[0].length];
+		for(int i=0;i<length1;i++){
+			for(int j=0;j<length2;j++){
+				visit[i][j] = false;
+			}
+		}
 		List<ModelDot> paintDots = new ArrayList<ModelDot>();
 		Stack<ModelDot> waitingStack = new Stack<ModelDot>();
 		if(((dots[0].length>seedX)&&(seedX>=0))&&((dots.length>seedY)&&(seedY>=0))){
@@ -133,13 +140,13 @@ public class ModelFill extends ModelShape{
 		for(ModelDot candidate: candidates){
 			if(isInteriorPointMethod){
 				// 内点定义
-				if((candidate.color==definedColor)&&(!visit[candidate.getY()][candidate.getX()])){
+				if((candidate.color.equals(definedColor))&&(!visit[candidate.getY()][candidate.getX()])){
 					result.add(candidate);
 					visit[candidate.getY()][candidate.getX()] = true;
 				}
 			}else{
 				// 边界定义
-				if((candidate.color!=definedColor)&&(!visit[candidate.getY()][candidate.getX()])){
+				if((!candidate.color.equals(definedColor))&&(!visit[candidate.getY()][candidate.getX()])){
 					result.add(candidate);
 					visit[candidate.getY()][candidate.getX()] = true;
 				}

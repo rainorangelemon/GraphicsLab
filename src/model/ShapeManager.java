@@ -46,7 +46,7 @@ public class ShapeManager {
 		List<ModelDot> newDots = newShape.getModelDots(dots);
 		for(ModelDot newDot: newDots){
 			if((newDot.getY()>=0)&&(newDot.getY()<height)&&(newDot.getX()>=0)&&(newDot.getX()<width)){
-				dots[newDot.getY()][newDot.getX()] = newDot.color;
+				dots[newDot.getY()][newDot.getX()] = newDot.getColor();
 			}else if(newDot.getMeshView()!=null){
 				current3D.add(newDot.getMeshView());
 			}
