@@ -31,6 +31,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
@@ -190,6 +191,9 @@ public class SketchPad extends Pane{
 					}
 				});
 				if(shapeChooser.showEditor()!=null){
+					Image anotherIcon = new Image("resources/favicon.png");
+			        stage.getIcons().add(anotherIcon);
+			        stage.setTitle("Yu's Lab");
 					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
 					stage.sizeToScene();
 					stage.show();
@@ -219,6 +223,9 @@ public class SketchPad extends Pane{
 					}
 				});
 				if(shapeChooser.showEditor()!=null){
+					Image anotherIcon = new Image("resources/favicon.png");
+			        stage.getIcons().add(anotherIcon);
+			        stage.setTitle("Yu's Lab");
 					stage.setScene(new Scene(new Pane(shapeChooser.showEditor())));
 					stage.sizeToScene();
 					stage.show();
