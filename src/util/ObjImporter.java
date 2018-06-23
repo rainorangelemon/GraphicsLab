@@ -52,7 +52,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,11 +60,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.CullFace;
+import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 
 /* Obj file reader */
-public class ObjImporter {
+public class ObjImporter extends File3dImporter{
 
 	// Obj file 中可能含有序号为负的顶点索引，转化为非负索引
     private int verticeIndex(int verticeIndex) {
@@ -97,29 +97,40 @@ public class ObjImporter {
     public Set<String> getMeshes() {
         return meshes.keySet();
     }
-    
-    public Map<String, TriangleMesh> getMeshesMap(){
-    	return meshes;
-    }
 
-    private Map<String, TriangleMesh> meshes = new HashMap<>();
-    private Map<String, Material> materials = new HashMap<>();
-    private List<Map<String, Material>> materialLibrary = new ArrayList<>();
-    private String directoryUrl;
+    private HashMap<String, TriangleMesh> meshes = new HashMap<>();
+    private HashMap<String, Material> materials = new HashMap<>();
+    private ArrayList<Map<String, Material>> materialLibrary = new ArrayList<>();
 
     public ObjImporter(String objFileUrl) throws FileNotFoundException, IOException {
+    	super(objFileUrl);
 		File initialFile = new File(objFileUrl);
-		this.directoryUrl = initialFile.getParent();
 	    InputStream targetStream = new FileInputStream(initialFile);
-        readObjFile(targetStream);
+        readFile(targetStream);
     }
-
-    public TriangleMesh getMesh(String key) {
-        return meshes.get(key);
-    }
-
-    public Material getMaterial(String key) {
-        return materials.get(key);
+    
+    
+    
+    public ObjImporter(String objFileUrl, 
+    		ArrayList<Double> vertices,
+    		HashMap<String, MeshStart> key2meshStart, 
+    		ArrayList<Integer> faces, 
+    		ArrayList<Integer> faceNormals, 
+    		ArrayList<Double> uvs, 
+    		ArrayList<Double> normals, 
+    		ArrayList<Map<String, Material>> materialLibrary, 
+    		HashMap<String, Material> materials, 
+    		ArrayList<Integer> smoothingGroups) throws FileNotFoundException, IOException {
+    	super(objFileUrl);
+    	super.setVertices(new ArrayList<Double>(vertices));
+		this.key2meshStart = new HashMap<String, MeshStart>(key2meshStart);
+		this.faces = new ArrayList<Integer>(faces);
+		this.faceNormals = new ArrayList<Integer>(faceNormals);
+		this.uvs = new ArrayList<Double>(uvs);
+		this.normals = new ArrayList<Double>(normals);
+		this.materialLibrary = new ArrayList<Map<String, Material>>(materialLibrary);
+		this.materials = new HashMap<String, Material>(materials);
+		this.smoothingGroups = new ArrayList<Integer>(smoothingGroups);
     }
 
     // 根据meshes中数据创建MeshView
@@ -131,20 +142,21 @@ public class ObjImporter {
         meshView.setCullFace(CullFace.NONE);
         return meshView;
     }
-
-    private ArrayList<Double> vertices = new ArrayList<Double>();
-    private ArrayList<Double> uvs = new ArrayList<Double>();
+    
+	protected ArrayList<Double> uvs = new ArrayList<Double>();
+	protected ArrayList<Double> normals = new ArrayList<Double>();
     private ArrayList<Integer> faces = new ArrayList<Integer>();
     private ArrayList<Integer> smoothingGroups = new ArrayList<Integer>();
-    private ArrayList<Double> normals = new ArrayList<Double>();
     private ArrayList<Integer> faceNormals = new ArrayList<Integer>();
+    private HashMap<String, MeshStart> key2meshStart = new HashMap<>();
     private Material currentMaterial = new PhongMaterial(Color.WHITE);
     private int facesStart = 0;
     private int facesNormalStart = 0;
     private static String DEFAULT_FACE = "defaultFace";
     private int smoothingGroupsStart = 0;
 
-    private void readObjFile(InputStream inputStream) throws IOException {
+    @Override
+	protected void readFile(InputStream inputStream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String line;
         int currentSmoothGroup = 0;
@@ -293,8 +305,6 @@ public class ObjImporter {
         }
         addMesh(key);
     }
-
-    private Map<String, MeshStart> key2meshStart = new HashMap<>();
     
     private void addMesh(String key) {
     	// 若faceStart大于当前faces的大小，则没有必要创建网格
@@ -324,6 +334,7 @@ public class ObjImporter {
         smoothingGroupsStart = smoothingGroups.size();
     }
 
+    @Override
     // 此函数用于顶点位置被修改后重新计算网格
     public void updateMeshes(){
         meshes.clear();
@@ -335,9 +346,9 @@ public class ObjImporter {
     
     // 创建三角网格组成的网格
 	private TriangleMesh updateTriangleMesh(MeshStart meshStart, boolean update) {
-		Map<Integer, Integer> verticeMap = new HashMap<>();
-        Map<Integer, Integer> uvMap = new HashMap<>();
-        Map<Integer, Integer> normalMap = new HashMap<>();
+		Map<Integer, Integer> verticeMap = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> uvMap = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> normalMap = new HashMap<Integer, Integer>();
         ArrayList<Double> currentVertices = new ArrayList<Double>();
         ArrayList<Double> currentUVs = new ArrayList<Double>();
         ArrayList<Double> currentNormals = new ArrayList<Double>();
@@ -411,100 +422,35 @@ public class ObjImporter {
         mesh.getFaceSmoothingGroups().setAll(smGroups);
 		return mesh;
 	}
-    
-    public static int[] arrayList2IntArray(List<Integer> arrayList){
-    	int[] result = new int[arrayList.size()];
-        Iterator<Integer> iterator = arrayList.iterator();
-        for (int i = 0; i < result.length; i++)
-        {
-            result[i] = iterator.next().intValue();
-        }
-        return result;
-    }
-    
-    public static float[] arrayList2DoubleArray(List<Double> arrayList){
-    	float[] result = new float[arrayList.size()];
-        Iterator<Double> iterator = arrayList.iterator();
-        for (int i = 0; i < result.length; i++)
-        {
-            result[i] = iterator.next().floatValue();
-        }
-        return result;
-    }
-    
-    public class MeshStart{
-    	private int facesStart, facesNormalStart, smoothingGroupsStart;
-    	private int facesSize, facesNormalSize, smoothingGroupSize;
-    	private int verticeSize, uvSize, normalSize;
-    	public MeshStart(int facesStart, 
-    			int facesNormalStart, 
-    			int smoothingGroupsStart,
-    			int facesSize, 
-    			int facesNormalSize, 
-    			int smoothingGroupSize,
-    			int verticeSize, 
-    			int uvSize, 
-    			int normalSize){
-    		this.facesStart = facesStart;
-    		this.facesNormalStart = facesNormalStart;
-    		this.smoothingGroupsStart = smoothingGroupsStart;
-    		this.facesSize = facesSize;
-    		this.facesNormalSize = facesNormalSize;
-    		this.smoothingGroupSize = smoothingGroupSize;
-    		this.verticeSize = verticeSize;
-    		this.uvSize = uvSize;
-    		this.normalSize =  normalSize;
-    	}
-		public int getFacesStart() {
-			return facesStart;
+
+	@Override
+	public List<MeshView> getMeshViews() {
+		List<MeshView> result = new ArrayList<MeshView>();
+		for(String key: getMeshes()){
+			MeshView meshView = this.createMeshView(key);
+			meshView.setDrawMode(DrawMode.FILL);
+			result.add(meshView);
 		}
-		public int getFacesNormalStart() {
-			return facesNormalStart;
-		}
-		public int getSmoothingGroupsStart() {
-			return smoothingGroupsStart;
-		}
-		public int getFacesSize() {
-			return facesSize;
-		}
-		public int getFacesNormalSize() {
-			return facesNormalSize;
-		}
-		public int getSmoothingGroupSize() {
-			return smoothingGroupSize;
-		}
-		public int getVerticeSize() {
-			return verticeSize;
-		}
-		public int getUvSize() {
-			return uvSize;
-		}
-		public int getNormalSize() {
-			return normalSize;
-		}
-    }
-	
-    public ArrayList<Double> getVertices() {
-		return vertices;
+		return result;
 	}
 	
-    public void setVertices(ArrayList<Double> vertices) {
-		this.vertices = vertices;
-	}
-	
-    public ArrayList<Double> getUvs() {
-		return uvs;
-	}
-	
-    public void setUvs(ArrayList<Double> uvs) {
-		this.uvs = uvs;
-	}
-	
-    public ArrayList<Double> getNormals() {
-		return normals;
-	}
-	
-    public void setNormals(ArrayList<Double> normals) {
-		this.normals = normals;
+	@Override 
+	public ObjImporter clone(){
+		try {
+			return new ObjImporter(super.getFileUrl(),     		
+					vertices,
+		    		key2meshStart, 
+		    		faces, 
+		    		faceNormals, 
+		    		uvs, 
+		    		normals, 
+		    		materialLibrary, 
+		    		materials, 
+		    		smoothingGroups);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

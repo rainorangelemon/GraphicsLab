@@ -93,7 +93,7 @@ public class Board {
 			 paper.importPic();
 		 });
 		 
-		 MenuItem import3DMenuItem = new MenuItem("Import 3D: OBJ");
+		 MenuItem import3DMenuItem = new MenuItem("Import 3D: OFF/OBJ");
 		 import3DMenuItem.setOnAction(e -> {
 			 paper.import3D();
 		 });

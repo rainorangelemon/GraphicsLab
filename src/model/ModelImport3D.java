@@ -1,6 +1,5 @@
 package model;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,25 +7,21 @@ import java.util.List;
 
 import model.operation.OperationRotation.Axis;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
-import util.ObjImporter;
+import util.File3dImporter;
 
 public class ModelImport3D extends ModelShape{
-	private File file;
-	private ObjImporter objImporter;
+	private File3dImporter fileImporter;
 	
-	public ModelImport3D(int width, int height, File file) throws FileNotFoundException, IOException {
+	public ModelImport3D(int width, int height, File3dImporter fileImporter) throws FileNotFoundException, IOException {
 		super(Color.WHITE);
-		setFile(file);
+		this.fileImporter = fileImporter;
 	}
 	
-	public ModelImport3D(int width, int height, File file, ArrayList<Double> vertices, ArrayList<Double> normals, ArrayList<Double> uvs) throws FileNotFoundException, IOException {
+	public ModelImport3D(int width, int height, File3dImporter fileImporter, ArrayList<Double> vertices) throws FileNotFoundException, IOException {
 		super(Color.WHITE);
-		setFile(file);
-		this.objImporter.setVertices(vertices);
-		this.objImporter.setNormals(normals);
-		this.objImporter.setUvs(uvs);
+		this.fileImporter = fileImporter.clone();
+		this.fileImporter.setVertices(vertices);
 	}
 
 	@Override
@@ -36,50 +31,37 @@ public class ModelImport3D extends ModelShape{
 		return result;
 	}
 
-	public File getFile() {
-		return file;
+	public File3dImporter getFileImporter() {
+		return fileImporter;
 	}
 
-	public void setFile(File file) throws FileNotFoundException, IOException {
-		if(file!=null){
-			this.file = file;
-			this.objImporter = new ObjImporter(file.getAbsolutePath());
-		}
+	public void setFileImporter(File3dImporter fileImporter) {
+		this.fileImporter = fileImporter;
 	}
 
-	//algorithm to choose the file
+	// algorithm to choose the file
 	private List<ModelDot> draw3D(){
     	List<ModelDot> result = new ArrayList<ModelDot>();
-    	if(objImporter!=null){
-			objImporter.updateMeshes();
-			for(String key: objImporter.getMeshes()){
-				MeshView meshView = objImporter.createMeshView(key);
-				meshView.setDrawMode(DrawMode.FILL);
-				result.add(new ModelDot(meshView));
-			}
+    	if(fileImporter!=null){
+    		fileImporter.updateMeshes();
+    		for(MeshView meshView: fileImporter.getMeshViews()){
+    			result.add(new ModelDot(meshView));
+    		}
     	}
         return result;
 	}
 
 	@Override
 	public ModelShape translation(int offsetX, int offsetY, int offsetZ) {
-		ArrayList<Double> vertices = new ArrayList<Double>(objImporter.getVertices());
-		ArrayList<Double> normals = new ArrayList<Double>(objImporter.getNormals());
-		ArrayList<Double> uvs = new ArrayList<Double>(objImporter.getUvs());
-		ArrayList<Double> newVertices = new ArrayList<Double>(),
-				newUvs = new ArrayList<Double>(uvs), 
-				newNormals = new ArrayList<Double>(normals);
+		ArrayList<Double> vertices = new ArrayList<Double>(fileImporter.getVertices());
+		ArrayList<Double> newVertices = new ArrayList<Double>();
 		for(int i=0; i<vertices.size(); i=i+3){
 			newVertices.add(vertices.get(i)+offsetX);
 			newVertices.add(vertices.get(i+1)+offsetY);
 			newVertices.add(vertices.get(i+2)+offsetZ);
 		}
-//		for(int i=0; i<uvs.size(); i=i+2){
-//			newUvs.add(uvs.get(i)+offsetX);
-//			newUvs.add(uvs.get(i+1)+offsetY);
-//		}
 		try {
-			return new ModelImport3D(0, 0, file, newVertices, newNormals, newUvs);
+			return new ModelImport3D(0, 0, this.fileImporter, newVertices);
 		} catch (IOException e) {
 			return this;
 		}
@@ -87,12 +69,8 @@ public class ModelImport3D extends ModelShape{
 
 	@Override
 	public ModelShape rotation(int rotationX, int rotationY, Axis axis, int rotationDegree) {
-		ArrayList<Double> vertices = new ArrayList<Double>(objImporter.getVertices());
-		ArrayList<Double> normals = new ArrayList<Double>(objImporter.getNormals());
-		ArrayList<Double> uvs = new ArrayList<Double>(objImporter.getUvs());
-		ArrayList<Double> newVertices = new ArrayList<Double>(),
-				newUvs = new ArrayList<Double>(uvs), 
-				newNormals = new ArrayList<Double>(normals);
+		ArrayList<Double> vertices = new ArrayList<Double>(fileImporter.getVertices());
+		ArrayList<Double> newVertices = new ArrayList<Double>();
 		double theta = ((double)rotationDegree)*Math.PI/180.0;
 		for(int i=0; i<vertices.size(); i=i+3){
 			double x, y;
@@ -125,7 +103,7 @@ public class ModelImport3D extends ModelShape{
 			}
 		}
 		try {
-			return new ModelImport3D(0, 0, file, newVertices, newNormals, newUvs);
+			return new ModelImport3D(0, 0, this.fileImporter, newVertices);
 		} catch (IOException e) {
 			return this;
 		}
@@ -134,12 +112,8 @@ public class ModelImport3D extends ModelShape{
 	@Override
 	public ModelShape scaling(int scalePointX, int scalePointY,
 			double scaleSizeX, double scaleSizeY) {
-		ArrayList<Double> vertices = new ArrayList<Double>(objImporter.getVertices());
-		ArrayList<Double> normals = new ArrayList<Double>(objImporter.getNormals());
-		ArrayList<Double> uvs = new ArrayList<Double>(objImporter.getUvs());
-		ArrayList<Double> newVertices = new ArrayList<Double>(),
-				newUvs = new ArrayList<Double>(uvs), 
-				newNormals = new ArrayList<Double>(normals);
+		ArrayList<Double> vertices = new ArrayList<Double>(fileImporter.getVertices());
+		ArrayList<Double> newVertices = new ArrayList<Double>();
 		for(int i=0; i<vertices.size(); i=i+3){
 			Double x = vertices.get(i);
 			Double y = vertices.get(i+1);
@@ -150,7 +124,7 @@ public class ModelImport3D extends ModelShape{
 			newVertices.add(vertices.get(i+2));
 		}
 		try {
-			return new ModelImport3D(0, 0, file, newVertices, newNormals, newUvs);
+			return new ModelImport3D(0, 0, this.fileImporter, newVertices);
 		} catch (IOException e) {
 			return this;
 		}
