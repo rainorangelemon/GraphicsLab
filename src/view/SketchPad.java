@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.image.RenderedImage;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -53,6 +53,7 @@ public class SketchPad extends Pane{
 	Label reporter = new Label("");
 	static String OUTSIDE_TEXT = "Outside SketchPad";
 	private VBox stepEditor = new VBox();
+	private SubScene scene3d;
 	
 	
 	public SketchPad(int height, int width){
@@ -260,11 +261,13 @@ public class SketchPad extends Pane{
 	            //Pad the capture area
 	            WritableImage writableImage = new WritableImage((int)getWidth(),
 	                    (int)getHeight());
-	            snapshot(null, writableImage);
-	            RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+	            scene3d.snapshot(null, writableImage);
+	            BufferedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
 	            //Write the snapshot to the chosen file
 	            ImageIO.write(renderedImage, "png", file);
-	        } catch (IOException ex) { ex.printStackTrace(); }
+	        } catch (IOException ex) { 
+	        	ex.printStackTrace(); 
+	        }
 	    }
 	}
 	
@@ -308,7 +311,7 @@ public class SketchPad extends Pane{
 	}
 	
 	public SubScene createScene3D() {
-	    SubScene scene3d = new SubScene(this, width, height, true, SceneAntialiasing.BALANCED);
+	    scene3d = new SubScene(this, width, height, true, SceneAntialiasing.BALANCED);
 	    scene3d.setFill(Color.WHITE);
 	    scene3d.setCamera(new PerspectiveCamera());
 	    return scene3d;
