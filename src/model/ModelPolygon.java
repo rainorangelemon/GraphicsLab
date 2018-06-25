@@ -122,13 +122,27 @@ public class ModelPolygon extends ModelShape{
 				return new ModelDots(new ArrayList<ModelDot>());
 			}
 		}else{
-			// the window is inside the polygon
-			ArrayList<Pair<Integer, Integer>> tempVer = new ArrayList<Pair<Integer, Integer>>();
-			tempVer.add(new Pair<Integer, Integer>(windowX0, windowY0));
-			tempVer.add(new Pair<Integer, Integer>(windowX1, windowY0));
-			tempVer.add(new Pair<Integer, Integer>(windowX1, windowY1));
-			tempVer.add(new Pair<Integer, Integer>(windowX0, windowY1));
-			return new ModelPolygon(super.getColor(), tempVer);
+			int minX = 1001, maxX = 0; 
+			int minY = 1001, maxY = 0; 
+			for(Pair<Integer, Integer> vertice: vertices){
+				int x = vertice.getKey();
+				int y = vertice.getValue();
+				minX = Math.min(minX, x);
+				maxX = Math.max(maxX, x);
+				minY = Math.min(minY, y);
+				maxY = Math.max(maxY, y);
+			}
+			if((minX>=windowX1)||(maxX<=windowX0)||(minY>=windowY1)||(maxY<=windowY0)){
+				return new ModelDots(new ArrayList<ModelDot>());
+			}else{
+				// the window is inside the polygon
+				ArrayList<Pair<Integer, Integer>> tempVer = new ArrayList<Pair<Integer, Integer>>();
+				tempVer.add(new Pair<Integer, Integer>(windowX0, windowY0));
+				tempVer.add(new Pair<Integer, Integer>(windowX1, windowY0));
+				tempVer.add(new Pair<Integer, Integer>(windowX1, windowY1));
+				tempVer.add(new Pair<Integer, Integer>(windowX0, windowY1));
+				return new ModelPolygon(super.getColor(), tempVer);
+			}
 		}
 	}
 	

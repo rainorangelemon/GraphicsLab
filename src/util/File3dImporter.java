@@ -21,7 +21,7 @@ public abstract class File3dImporter {
 		this.directoryUrl = initialFile.getParent();
 	}
 	
-	protected abstract void readFile(InputStream targetStream) throws IOException;
+	protected abstract void readFile(InputStream targetStream) throws Exception;
     
     // 根据meshes中数据创建MeshView
     public abstract List<MeshView> getMeshViews();

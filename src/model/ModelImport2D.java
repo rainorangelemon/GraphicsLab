@@ -2,7 +2,6 @@ package model;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class ModelImport2D extends ModelShape{
                 }
             }
             return result;
-        } catch (IOException | IllegalArgumentException ex) {
+        } catch (Exception ex) {
            return new ArrayList<ModelDot>();
         }
 	}

@@ -27,7 +27,7 @@ public class OffImporter extends File3dImporter{
     private ArrayList<TriangleMesh> meshes = new ArrayList<>();
 	private double minX=1001, maxX=0, minY=1001, maxY=0, minZ=0;
 
-    public OffImporter(String objFileUrl) throws FileNotFoundException, IOException {
+    public OffImporter(String objFileUrl) throws NumberFormatException, FileNotFoundException, IOException {
     	super(objFileUrl);
 		File initialFile = new File(objFileUrl);
 	    InputStream targetStream = new FileInputStream(initialFile);
@@ -142,80 +142,80 @@ public class OffImporter extends File3dImporter{
 
     @Override
 	protected void readFile(InputStream inputStream) throws IOException {
-    	long lineNum = getFileLineNum();
-    	randomMaterials = randomMaterials();
-    	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        int currentSmoothGroup = 0;
-        Integer key = DEFAULT_FACE;
-        int vNum = 0, faceNum = 0;
-		int currentV = 0, currentFace = 0;
-        boolean start = false;
-        while ((line = br.readLine()) != null) {
-            try {
-            	if (line.startsWith("OFF")){
-            		// do nothing
-            	} else if(start==false){
-                	String[] split = line.trim().split(" +");
-                    vNum = Integer.parseInt(split[0]);
-                    faceNum = Integer.parseInt(split[1]);
-                	start = true;
-            	} else if (currentV < vNum) {
-                	// 顶点
-                    String[] split = line.trim().split(" +");
-                    double x = Double.parseDouble(split[0]);
-                    double y = Double.parseDouble(split[1]);
-                    double z = Double.parseDouble(split[2]);
-                    vertices.add(x);
-                    vertices.add(y);
-                    vertices.add(z);
-                    minX = Math.min(minX, x);
-                    maxX = Math.max(maxX, x);
-                    minY = Math.min(minY, y);
-                    maxY = Math.max(maxY, y);
-                    minZ = Math.min(minZ, z);
-                    
-                    currentV ++;
-                    
-                } else if (currentFace < faceNum) {
-                	// 创建面
-                    String[] split = line.trim().split(" +");
-                    int length = Integer.parseInt(split[0]);
-                    int[] points = new int[length];
-                    for (int i = 0; i < length; i++) {
-                        points[i] = Integer.parseInt(split[i+1]);
-                    }
-                    int v1 = points[0];
-                    for (int i = 1; i < points.length - 1; i++) {
-                        int v2 = points[i];
-                        int v3 = points[i + 1];
-                        // divide the polygon into triangles, then add into faces
-                        faces.add(v1);
-                        faces.add(-1);
-                        faces.add(v2);
-                        faces.add(-1);
-                        faces.add(v3);
-                        faces.add(-1);
-                        faceNormals.add(-1);
-                        faceNormals.add(-1);
-                        faceNormals.add(-1);
-
-                        smoothingGroups.add(currentSmoothGroup);
-                    }
-                    currentFace ++;
-                    if(currentFace%(lineNum/100)==0){
-	                	// 命名实体
-	                    addMesh(key);
-	                    key = new Integer(key+1);
-                    }
-                } else {
-                	// 未知行，什么都不做
-                }
-            } catch (Exception ex) {
-            	ex.printStackTrace();
-            }
-        }
-        addMesh(key);
+    	try{
+	    	long lineNum = getFileLineNum();
+	    	randomMaterials = randomMaterials();
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+	        String line;
+	        int currentSmoothGroup = 0;
+	        Integer key = DEFAULT_FACE;
+	        int vNum = 0, faceNum = 0;
+			int currentV = 0, currentFace = 0;
+	        boolean start = false;
+	        while ((line = br.readLine()) != null) {
+	            	if (line.startsWith("OFF")){
+	            		// do nothing
+	            	} else if(start==false){
+	                	String[] split = line.trim().split(" +");
+	                    vNum = Integer.parseInt(split[0]);
+	                    faceNum = Integer.parseInt(split[1]);
+	                	start = true;
+	            	} else if (currentV < vNum) {
+	                	// 顶点
+	                    String[] split = line.trim().split(" +");
+	                    double x = Double.parseDouble(split[0]);
+	                    double y = Double.parseDouble(split[1]);
+	                    double z = Double.parseDouble(split[2]);
+	                    vertices.add(x);
+	                    vertices.add(y);
+	                    vertices.add(z);
+	                    minX = Math.min(minX, x);
+	                    maxX = Math.max(maxX, x);
+	                    minY = Math.min(minY, y);
+	                    maxY = Math.max(maxY, y);
+	                    minZ = Math.min(minZ, z);
+	                    
+	                    currentV ++;
+	                    
+	                } else if (currentFace < faceNum) {
+	                	// 创建面
+	                    String[] split = line.trim().split(" +");
+	                    int length = Integer.parseInt(split[0]);
+	                    int[] points = new int[length];
+	                    for (int i = 0; i < length; i++) {
+	                        points[i] = Integer.parseInt(split[i+1]);
+	                    }
+	                    int v1 = points[0];
+	                    for (int i = 1; i < points.length - 1; i++) {
+	                        int v2 = points[i];
+	                        int v3 = points[i + 1];
+	                        // divide the polygon into triangles, then add into faces
+	                        faces.add(v1);
+	                        faces.add(-1);
+	                        faces.add(v2);
+	                        faces.add(-1);
+	                        faces.add(v3);
+	                        faces.add(-1);
+	                        faceNormals.add(-1);
+	                        faceNormals.add(-1);
+	                        faceNormals.add(-1);
+	
+	                        smoothingGroups.add(currentSmoothGroup);
+	                    }
+	                    currentFace ++;
+	                    if(currentFace%(lineNum/100)==0){
+		                	// 命名实体
+		                    addMesh(key);
+		                    key = new Integer(key+1);
+	                    }
+	                } else {
+	                	// 未知行，什么都不做
+	                }
+	        }
+	        addMesh(key);
+    	} catch(Exception ex){
+    		throw ex;
+    	}
     }
     
     private void addMesh(int key) {

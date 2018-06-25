@@ -102,7 +102,7 @@ public class ObjImporter extends File3dImporter{
     private HashMap<String, Material> materials = new HashMap<>();
     private ArrayList<Map<String, Material>> materialLibrary = new ArrayList<>();
 
-    public ObjImporter(String objFileUrl) throws FileNotFoundException, IOException {
+    public ObjImporter(String objFileUrl) throws Exception{
     	super(objFileUrl);
 		File initialFile = new File(objFileUrl);
 	    InputStream targetStream = new FileInputStream(initialFile);
@@ -156,154 +156,154 @@ public class ObjImporter extends File3dImporter{
     private int smoothingGroupsStart = 0;
 
     @Override
-	protected void readFile(InputStream inputStream) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-        String line;
-        int currentSmoothGroup = 0;
-        String key = DEFAULT_FACE;
-        while ((line = br.readLine()) != null) {
-            try {
-                if (line.startsWith("mtllib ")) {
-                    // 设置materialLib
-                    String[] split = line.substring("mtllib ".length()).trim().split(" +");
-                    for (String filename : split) {
-                        MtlReader mtlReader = new MtlReader(filename, this.directoryUrl);
-                        materialLibrary.add(mtlReader.getMaterials());
-                    }
-                } else if (line.startsWith("usemtl ")) {
-                    addMesh(key);
-                    // 设置之后mesh的材质
-                    String materialName = line.substring("usemtl ".length());
-                    for (Map<String, Material> mm : materialLibrary) {
-                        Material m = mm.get(materialName);
-                        if (m != null) {
-                            currentMaterial = m;
-                            break;
-                        }
-                    }
-                } else if (line.isEmpty() || line.startsWith("#")) {
-                    // 无视空行与注释
-                } else if (line.startsWith("v ")) {
-                	// 顶点
-                    String[] split = line.substring(2).trim().split(" +");
-                    double x = Double.parseDouble(split[0]);
-                    double y = Double.parseDouble(split[1]);
-                    double z = Double.parseDouble(split[2]);
-
-                    vertices.add(x);
-                    vertices.add(y);
-                    vertices.add(z);
-                    
-                } else if (line.startsWith("vt ")) {		
-                	// 材质顶点
-                    String[] split = line.substring(3).trim().split(" +");
-                    double u = Double.parseDouble(split[0]);
-                    double v = Double.parseDouble(split[1]);
-                    
-                    uvs.add(u);
-                    uvs.add(1 - v);
-                } else if (line.startsWith("vn ")) {		
-                	// 顶点处法线向量
-                    String[] split = line.substring(2).trim().split(" +");
-                    double x = Double.parseDouble(split[0]);
-                    double y = Double.parseDouble(split[1]);
-                    double z = Double.parseDouble(split[2]);
-                    normals.add(x);
-                    normals.add(y);
-                    normals.add(z);
-                } else if (line.startsWith("f ")) {
-                	// 创建面
-                    String[] split = line.substring(2).trim().split(" +");
-                    int[][] points = new int[split.length][];
-                    boolean uvGiven = true;
-                    boolean normalGiven = true;
-                    for (int i = 0; i < split.length; i++) {
-                        String[] split2 = split[i].split("/");
-                        if (split2.length < 2) {
-                            uvGiven = false;
-                        }
-                        if (split2.length < 3) {
-                            normalGiven = false;
-                        }
-                        points[i] = new int[split2.length];
-                        for (int j = 0; j < split2.length; j++) {
-                            if (split2[j].length() == 0) {
-                                points[i][j] = 0;
-                                if (j == 1) {
-                                    uvGiven = false;
-                                } else if (j == 2) {
-                                    normalGiven = false;
-                                }
-                            } else {
-                                points[i][j] = Integer.parseInt(split2[j]);
-                            }
-                        }
-                    }
-                    int v1 = verticeIndex(points[0][0]);
-                    int uv1 = -1;
-                    int n1 = -1;
-                    // 纹理点必须大于等于零
-                    if (uvGiven) {
-                        uv1 = uvIndex(points[0][1]);
-                        if (uv1 < 0) {
-                            uvGiven = false;
-                        }
-                    }
-                    // 法线必须大于等于零
-                    if (normalGiven) {
-                        n1 = normalIndex(points[0][2]);
-                        if (n1 < 0) {
-                            normalGiven = false;
-                        }
-                    }
-                    for (int i = 1; i < points.length - 1; i++) {
-                        int v2 = verticeIndex(points[i][0]);
-                        int v3 = verticeIndex(points[i + 1][0]);
-                        int uv2 = -1;
-                        int uv3 = -1;
-                        int n2 = -1;
-                        int n3 = -1;
-                        if (uvGiven) {
-                            uv2 = uvIndex(points[i][1]);
-                            uv3 = uvIndex(points[i + 1][1]);
-                        }
-                        if (normalGiven) {
-                            n2 = normalIndex(points[i][2]);
-                            n3 = normalIndex(points[i + 1][2]);
-                        }
-                        // divide the polygon into triangles, then add into faces
-                        faces.add(v1);
-                        faces.add(uv1);
-                        faces.add(v2);
-                        faces.add(uv2);
-                        faces.add(v3);
-                        faces.add(uv3);
-                        faceNormals.add(n1);
-                        faceNormals.add(n2);
-                        faceNormals.add(n3);
-
-                        smoothingGroups.add(currentSmoothGroup);
-                    }
-                } else if (line.startsWith("g ") || line.equals("g")) {
-                	// 命名实体
-                    addMesh(key);
-                    key = line.length() > 2 ? line.substring(2) : DEFAULT_FACE;
-                
-                } else if (line.startsWith("s ")) {
-                	// 平滑化
-                    if (line.substring(2).equals("off")) {
-                        currentSmoothGroup = 0;
-                    } else {
-                        currentSmoothGroup = Integer.parseInt(line.substring(2));
-                    }
-                } else {
-                	// 未知行，什么都不做
-                }
-            } catch (Exception ex) {
-            	ex.printStackTrace();
-            }
+	protected void readFile(InputStream inputStream) throws Exception {
+        try {
+	    	BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+	        String line;
+	        int currentSmoothGroup = 0;
+	        String key = DEFAULT_FACE;
+	        while ((line = br.readLine()) != null) {
+	                if (line.startsWith("mtllib ")) {
+	                    // 设置materialLib
+	                    String[] split = line.substring("mtllib ".length()).trim().split(" +");
+	                    for (String filename : split) {
+	                        MtlReader mtlReader = new MtlReader(filename, this.directoryUrl);
+	                        materialLibrary.add(mtlReader.getMaterials());
+	                    }
+	                } else if (line.startsWith("usemtl ")) {
+	                    addMesh(key);
+	                    // 设置之后mesh的材质
+	                    String materialName = line.substring("usemtl ".length());
+	                    for (Map<String, Material> mm : materialLibrary) {
+	                        Material m = mm.get(materialName);
+	                        if (m != null) {
+	                            currentMaterial = m;
+	                            break;
+	                        }
+	                    }
+	                } else if (line.isEmpty() || line.startsWith("#")) {
+	                    // 无视空行与注释
+	                } else if (line.startsWith("v ")) {
+	                	// 顶点
+	                    String[] split = line.substring(2).trim().split(" +");
+	                    double x = Double.parseDouble(split[0]);
+	                    double y = Double.parseDouble(split[1]);
+	                    double z = Double.parseDouble(split[2]);
+	
+	                    vertices.add(x);
+	                    vertices.add(y);
+	                    vertices.add(z);
+	                    
+	                } else if (line.startsWith("vt ")) {		
+	                	// 材质顶点
+	                    String[] split = line.substring(3).trim().split(" +");
+	                    double u = Double.parseDouble(split[0]);
+	                    double v = Double.parseDouble(split[1]);
+	                    
+	                    uvs.add(u);
+	                    uvs.add(1 - v);
+	                } else if (line.startsWith("vn ")) {		
+	                	// 顶点处法线向量
+	                    String[] split = line.substring(2).trim().split(" +");
+	                    double x = Double.parseDouble(split[0]);
+	                    double y = Double.parseDouble(split[1]);
+	                    double z = Double.parseDouble(split[2]);
+	                    normals.add(x);
+	                    normals.add(y);
+	                    normals.add(z);
+	                } else if (line.startsWith("f ")) {
+	                	// 创建面
+	                    String[] split = line.substring(2).trim().split(" +");
+	                    int[][] points = new int[split.length][];
+	                    boolean uvGiven = true;
+	                    boolean normalGiven = true;
+	                    for (int i = 0; i < split.length; i++) {
+	                        String[] split2 = split[i].split("/");
+	                        if (split2.length < 2) {
+	                            uvGiven = false;
+	                        }
+	                        if (split2.length < 3) {
+	                            normalGiven = false;
+	                        }
+	                        points[i] = new int[split2.length];
+	                        for (int j = 0; j < split2.length; j++) {
+	                            if (split2[j].length() == 0) {
+	                                points[i][j] = 0;
+	                                if (j == 1) {
+	                                    uvGiven = false;
+	                                } else if (j == 2) {
+	                                    normalGiven = false;
+	                                }
+	                            } else {
+	                                points[i][j] = Integer.parseInt(split2[j]);
+	                            }
+	                        }
+	                    }
+	                    int v1 = verticeIndex(points[0][0]);
+	                    int uv1 = -1;
+	                    int n1 = -1;
+	                    // 纹理点必须大于等于零
+	                    if (uvGiven) {
+	                        uv1 = uvIndex(points[0][1]);
+	                        if (uv1 < 0) {
+	                            uvGiven = false;
+	                        }
+	                    }
+	                    // 法线必须大于等于零
+	                    if (normalGiven) {
+	                        n1 = normalIndex(points[0][2]);
+	                        if (n1 < 0) {
+	                            normalGiven = false;
+	                        }
+	                    }
+	                    for (int i = 1; i < points.length - 1; i++) {
+	                        int v2 = verticeIndex(points[i][0]);
+	                        int v3 = verticeIndex(points[i + 1][0]);
+	                        int uv2 = -1;
+	                        int uv3 = -1;
+	                        int n2 = -1;
+	                        int n3 = -1;
+	                        if (uvGiven) {
+	                            uv2 = uvIndex(points[i][1]);
+	                            uv3 = uvIndex(points[i + 1][1]);
+	                        }
+	                        if (normalGiven) {
+	                            n2 = normalIndex(points[i][2]);
+	                            n3 = normalIndex(points[i + 1][2]);
+	                        }
+	                        // divide the polygon into triangles, then add into faces
+	                        faces.add(v1);
+	                        faces.add(uv1);
+	                        faces.add(v2);
+	                        faces.add(uv2);
+	                        faces.add(v3);
+	                        faces.add(uv3);
+	                        faceNormals.add(n1);
+	                        faceNormals.add(n2);
+	                        faceNormals.add(n3);
+	
+	                        smoothingGroups.add(currentSmoothGroup);
+	                    }
+	                } else if (line.startsWith("g ") || line.equals("g")) {
+	                	// 命名实体
+	                    addMesh(key);
+	                    key = line.length() > 2 ? line.substring(2) : DEFAULT_FACE;
+	                
+	                } else if (line.startsWith("s ")) {
+	                	// 平滑化
+	                    if (line.substring(2).equals("off")) {
+	                        currentSmoothGroup = 0;
+	                    } else {
+	                        currentSmoothGroup = Integer.parseInt(line.substring(2));
+	                    }
+	                } else {
+	                	// 未知行，什么都不做
+	                }
+	        }
+	        addMesh(key);
+        } catch (Exception ex) {
+        	throw ex;
         }
-        addMesh(key);
     }
     
     private void addMesh(String key) {
