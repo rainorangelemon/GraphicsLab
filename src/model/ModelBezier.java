@@ -49,7 +49,7 @@ public class ModelBezier extends ModelShape{
 			return result;
 		}
 		int n = this.interpolationDots.size() - 1;
-		double iter_step =  1.0/((n+1)*Math.sqrt(new Double(height*height + width*width)));
+		double iter_step =  1.0/(2*(n+1)*Math.sqrt(new Double(height*height + width*width)));
 		double iter_id;
 		for (iter_id = 0; iter_id <= 1; iter_id += iter_step) {  
 			  

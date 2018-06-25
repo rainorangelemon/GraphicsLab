@@ -69,8 +69,8 @@ public class Import3DChooser extends ShapeChooser{
 					OffImporter fileImporter = new OffImporter(file.getAbsolutePath());
 					chooseColor(fileImporter);
 				}
-			} catch (IOException e) {
-				makeFormatError();
+			} catch (Exception e) {
+				makeFormatError(file.getAbsolutePath());
 			}
         }else{
         	saver.call(null);
@@ -161,10 +161,16 @@ public class Import3DChooser extends ShapeChooser{
 		return result;
 	}
 
-	private void makeFormatError(){
+	private void makeFormatError(String string){
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Format Error");
-		alert.setHeaderText("The format of the obj file is wrong");
+		if(string.endsWith("obj")){
+			alert.setHeaderText("The format of the obj file is wrong");
+		}else if(string.endsWith("off")){
+			alert.setHeaderText("The format of the off file is wrong");
+		}else{
+			alert.setHeaderText("The format of the file is wrong");
+		}
 		alert.setContentText("Please check and change the texts in the file before import it!");
 		alert.showAndWait();
 	}
